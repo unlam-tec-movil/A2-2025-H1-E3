@@ -25,6 +25,9 @@ fun HomeScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val uiState: PostUIState by viewModel.uiState.collectAsState()
+    // https://developer.android.com/develop/ui/compose/side-effects?hl=es-419
+    // LaunchedEffect: Ejecuta funciones de suspensión en el alcance de un elemento componible.
+    // Cuando necesites realizar cambios en el estado de la app, para mostrar una Snackbar
     LaunchedEffect(Unit) {
         viewModel.fetchPosts()
     }

@@ -1,16 +1,13 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -25,13 +22,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
-import coil.compose.AsyncImage
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+fun formatFriendlyDate(isoDate: String?): String =
+    try {
+        val formatter = DateTimeFormatter.ISO_DATE_TIME
+        val dateTime = LocalDateTime.parse(isoDate, formatter)
+
+        val outputFormatter =
+            DateTimeFormatter.ofPattern(
+                "d 'de' MMMM 'de' yyyy 'a las' HH:mm",
+                Locale("es"),
+            )
+        dateTime.format(outputFormatter)
+    } catch (e: Exception) {
+        "Fecha inválida"
+    }
 
 @Composable
 fun PostCard(
@@ -53,16 +66,7 @@ fun PostCard(
                 .padding(12.dp),
     ) {
         // Avatar
-        AsyncImage(
-            model = "${post.avatarUrl}&size=256&bold=true&background=random&color=ffffff",
-            contentDescription = "avatar",
-            modifier =
-                Modifier
-                    .size(48.dp)
-                    .border(1.5.dp, MaterialTheme.colorScheme.surfaceBright, CircleShape)
-                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
-                    .clip(CircleShape),
-        )
+        Avatar(post.avatarUrl)
 
         Spacer(modifier = Modifier.width(10.dp))
 
@@ -79,7 +83,7 @@ fun PostCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = post.date,
+                    text = formatFriendlyDate(post.date),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                 )
@@ -99,7 +103,6 @@ fun PostCard(
             // Actions
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                // horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 IconButton(onClick = onReplyClick) {
                     Icon(

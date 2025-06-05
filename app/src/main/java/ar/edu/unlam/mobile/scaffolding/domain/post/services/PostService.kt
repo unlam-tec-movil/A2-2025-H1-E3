@@ -12,4 +12,3 @@ class PostService
     ) {
         suspend fun fetchPosts(): List<Post> = postRepository.getPosts().first()
     }
-

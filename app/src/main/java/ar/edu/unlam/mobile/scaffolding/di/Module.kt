@@ -6,7 +6,9 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.AuthInterceptor
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.RetrofitService
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.repository.IPostRepository
+import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,4 +40,10 @@ object Module {
     fun providerPostRepository(
         apiService: ApiService
     ): IPostRepository = PostRepository(apiService)
+
+    @Provides
+    fun provideUserRepository(
+        apiService: ApiService,
+        tokenManager: TokenManager,
+    ): IUserRepository = UserRepository(apiService, tokenManager)
 }

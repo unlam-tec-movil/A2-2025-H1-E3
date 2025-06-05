@@ -10,8 +10,7 @@ import kotlinx.coroutines.flow.flowOn
 
 class PostRepository(
     private val apiService: ApiService,
-) : IPostRepository  {
-
+) : IPostRepository {
     override suspend fun getPosts(): Flow<List<Post>> =
         flow {
             val response = apiService.getFeed()

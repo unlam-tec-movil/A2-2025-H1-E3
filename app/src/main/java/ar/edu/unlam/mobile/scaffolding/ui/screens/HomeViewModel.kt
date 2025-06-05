@@ -1,50 +1,56 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
+import ar.edu.unlam.mobile.scaffolding.domain.post.services.PostService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Immutable
-sealed interface HelloMessageUIState {
+sealed interface FeedUIState {
     data class Success(
-        val message: String,
-    ) : HelloMessageUIState
+        val posts: List<Post>,
+    ) : FeedUIState
 
-    data object Loading : HelloMessageUIState
+    data object Loading : FeedUIState
 
     data class Error(
         val message: String,
-    ) : HelloMessageUIState
+    ) : FeedUIState
 }
 
-data class HomeUIState(
-    val helloMessageState: HelloMessageUIState,
+data class PostUIState(
+    val feedUiState: FeedUIState,
 )
 
 @HiltViewModel
 class HomeViewModel
     @Inject
-    constructor() : ViewModel() {
-        // Mutable State Flow contiene un objeto de estado mutable. Simplifica la operación de
-        // actualización de información y de manejo de estados de una aplicación: Cargando, Error, Éxito
-        // (https://developer.android.com/kotlin/flow/stateflow-and-sharedflow)
-        // _helloMessage State es el estado del componente "HelloMessage" inicializado como "Cargando"
-        private val helloMessage = MutableStateFlow(HelloMessageUIState.Loading)
-
-        // _Ui State es el estado general del view model.
-        private val _uiState =
-            MutableStateFlow(
-                HomeUIState(helloMessage.value),
-            )
-
-        // UIState expone el estado anterior como un Flujo de Estado de solo lectura.
-        // Esto impide que se pueda modificar el estado desde fuera del ViewModel.
+    constructor(
+        private val postService: PostService,
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow(PostUIState(FeedUIState.Loading))
         val uiState = _uiState.asStateFlow()
 
         init {
-            _uiState.value = HomeUIState(HelloMessageUIState.Success("2b"))
+            fetchPosts()
+        }
+
+        fun fetchPosts() {
+            viewModelScope.launch {
+                try {
+                    val posts = postService.fetchPosts()
+                    _uiState.value = PostUIState(FeedUIState.Success(posts))
+                } catch (exception: Exception) {
+                    Log.e("HomeViewModel", "Error cargando posts", exception)
+                    _uiState.value = PostUIState(FeedUIState.Error("Error"))
+                }
+            }
         }
     }

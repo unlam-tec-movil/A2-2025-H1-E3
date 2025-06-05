@@ -27,8 +27,7 @@ object Module {
 
     @Provides
     @Singleton
-    fun providerAuthInterceptor(tokenManager: TokenManager): AuthInterceptor =
-        AuthInterceptor(tokenManager)
+    fun providerAuthInterceptor(tokenManager: TokenManager): AuthInterceptor = AuthInterceptor(tokenManager)
 
     @Provides
     fun providerApiService(tokenManager: TokenManager): ApiService =
@@ -37,9 +36,7 @@ object Module {
         )
 
     @Provides
-    fun providerPostRepository(
-        apiService: ApiService
-    ): IPostRepository = PostRepository(apiService)
+    fun providerPostRepository(apiService: ApiService): IPostRepository = PostRepository(apiService)
 
     @Provides
     fun provideUserRepository(

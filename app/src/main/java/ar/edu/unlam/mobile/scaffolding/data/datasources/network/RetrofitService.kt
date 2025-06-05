@@ -2,7 +2,6 @@ package ar.edu.unlam.mobile.scaffolding.data.datasources.network
 
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.TokenManager
 import okhttp3.OkHttpClient
-
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

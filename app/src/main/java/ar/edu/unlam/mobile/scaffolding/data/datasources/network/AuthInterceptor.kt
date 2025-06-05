@@ -9,10 +9,14 @@ class AuthInterceptor(
     private val tokenManager: TokenManager,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request().newBuilder().apply {
-            addHeader("Authorization", tokenManager.userToken ?: "")
-            addHeader("Application-Token", tokenManager.appToken)
-        }.build()
+        val request =
+            chain
+                .request()
+                .newBuilder()
+                .apply {
+                    addHeader("Authorization", tokenManager.userToken ?: "")
+                    addHeader("Application-Token", tokenManager.appToken)
+                }.build()
         Log.d("AuthInterceptor", "Token: ${tokenManager.appToken}")
         return chain.proceed(request)
     }

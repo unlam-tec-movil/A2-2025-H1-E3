@@ -77,4 +77,14 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     androidTestImplementation(libs.google.dagger.hilt.android.testing)
     testImplementation(libs.google.dagger.hilt.android.testing)
+
+    // coil
+    implementation(libs.io.coil.kt)
+
+    // MU Icons Extended
+    implementation(libs.material.icons.extended)
+
+    // retrofit
+    implementation(libs.retrofit)
+    implementation(libs.gsonConverter)
 }

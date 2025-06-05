@@ -11,8 +11,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -49,6 +53,7 @@ fun MainScreen() {
     // para navegar como naviegate y también la información de en dónde se "encuentra" el usuario
     // a través del back stack
     val controller = rememberNavController()
+    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         bottomBar = { BottomBar(controller = controller) },
         floatingActionButton = {
@@ -56,6 +61,7 @@ fun MainScreen() {
                 Icon(Icons.Filled.Home, contentDescription = "Home")
             }
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.
@@ -64,7 +70,17 @@ fun MainScreen() {
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
             composable("home") {
                 // Home es el componente en sí que es el destino de navegación.
-                HomeScreen(modifier = Modifier.padding(paddingValue))
+                HomeScreen(
+                    modifier = Modifier.padding(paddingValue),
+                    onError = { message ->
+                        LaunchedEffect(message) {
+                            snackbarHostState.showSnackbar(
+                                message = message,
+                                actionLabel = "Cerrar",
+                            )
+                        }
+                    },
+                )
             }
             composable(
                 route = "user/{id}",

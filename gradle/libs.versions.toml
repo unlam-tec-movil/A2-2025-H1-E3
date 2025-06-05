@@ -13,6 +13,9 @@ ksp = "2.0.20-1.0.24"
 androidXHilt = "1.2.0"
 kover = "0.7.6"
 ktlint = "12.1.0"
+coil = "2.7.0"
+materialIconsExtended = "1.7.8"
+retrofit = "2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +37,11 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 google-dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 google-dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 google-dagger-hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "dagger" }
+
+io-coil-kt = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil"}
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+gsonConverter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

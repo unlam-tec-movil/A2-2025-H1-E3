@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
+import ar.edu.unlam.mobile.scaffolding.domain.post.services.PostService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,7 +32,9 @@ data class PostUIState(
 @HiltViewModel
 class HomeViewModel
     @Inject
-    constructor() : ViewModel() {
+    constructor(
+        private val postService: PostService,
+    ) : ViewModel() {
         private val _uiState = MutableStateFlow(PostUIState(FeedUIState.Loading))
         val uiState = _uiState.asStateFlow()
 
@@ -39,55 +42,55 @@ class HomeViewModel
             fetchPosts()
         }
 
-//    fun fetchPosts() {
-//        viewModelScope.launch {
-//            try {
-//                val posts = postService.fetchPosts()
-//                _uiState.value = PostUIState(FeedUIState.Success(posts))
-//            } catch (exception: Exception) {
-//                Log.e("HomeViewModel", "Error cargando posts", exception)
-//                _uiState.value = PostUIState(FeedUIState.Error("Error"))
-//            }
-//        }
-//    }
-        // ESTO NO VA SON DATOS DE PRUEBA HASTA QUE ANDE LA API
-        private fun generarPostsMock(): List<Post> {
-            // delay(5000L)
-            return List(1000) { index ->
-                Post(
-                    id = index,
-                    date = "2025-05-${(1..30).random()}",
-                    liked = true,
-                    author = "Christian Olivera",
-                    parentId = 1,
-                    avatarUrl =
-                        "https://scontent.feze9-1.fna.fbcdn.net/v/t1.6435-1/106390814_10221562122258462_" +
-                            "2961036162880397966_n.jpg?stp=cp0_dst-jpg_s40x40_tt6&_nc_cat=" +
-                            "105&ccb=1-7&_nc_sid=e99d92&_nc_ohc=0HtuY864DMMQ7kNvwFO2DvH&_nc_oc=" +
-                            "Adl2X8g_xGAf4LlRe0VHEvL2y_6pFs6aTWJmAO5RHmUNU5LGD_UV4z-QgtCvxTP3fQ5_" +
-                            "AU6e_trSeGPnDwvJTU_X&_nc_zt=24&_nc_ht=scontent.feze9-1.fna&_nc_gid=" +
-                            "5L8gOKlyQdCznYHdLvkLDw&oh=00_AfKpgUYcXEAnwAJNA6ioggZeZzLSSXy" +
-                            "Bv2wAvIs29jCFEw&oe=68641D92",
-                    likes = 100,
-                    message =
-                        "Para los q intentan entender, a franco lo paran y sale atrás de " +
-                            "Sainz y el equipo le pide q intente pasarlo, el alpine en " +
-                            "recta no puede pasar nunca a un motor mercedes, resultado? " +
-                            "Derrite los neumáticos por el aire sucio y encima en su stint " +
-                            "más largo, el equipo ya pidió",
-                )
-            }.shuffled()
-        }
-
         fun fetchPosts() {
             viewModelScope.launch {
                 try {
-                    val posts = generarPostsMock()
+                    val posts = postService.fetchPosts()
                     _uiState.value = PostUIState(FeedUIState.Success(posts))
                 } catch (exception: Exception) {
-                    Log.e("HomeViewModel", "Error fetching posts", exception)
+                    Log.e("HomeViewModel", "Error cargando posts", exception)
                     _uiState.value = PostUIState(FeedUIState.Error("Error"))
                 }
             }
         }
+        // ESTO NO VA SON DATOS DE PRUEBA HASTA QUE ANDE LA API
+//        private fun generarPostsMock(): List<Post> {
+//            // delay(5000L)
+//            return List(1000) { index ->
+//                Post(
+//                    id = index,
+//                    date = "2025-05-${(1..30).random()}",
+//                    liked = true,
+//                    author = "Christian Olivera",
+//                    parentId = 1,
+//                    avatarUrl =
+//                        "https://scontent.feze9-1.fna.fbcdn.net/v/t1.6435-1/106390814_10221562122258462_" +
+//                            "2961036162880397966_n.jpg?stp=cp0_dst-jpg_s40x40_tt6&_nc_cat=" +
+//                            "105&ccb=1-7&_nc_sid=e99d92&_nc_ohc=0HtuY864DMMQ7kNvwFO2DvH&_nc_oc=" +
+//                            "Adl2X8g_xGAf4LlRe0VHEvL2y_6pFs6aTWJmAO5RHmUNU5LGD_UV4z-QgtCvxTP3fQ5_" +
+//                            "AU6e_trSeGPnDwvJTU_X&_nc_zt=24&_nc_ht=scontent.feze9-1.fna&_nc_gid=" +
+//                            "5L8gOKlyQdCznYHdLvkLDw&oh=00_AfKpgUYcXEAnwAJNA6ioggZeZzLSSXy" +
+//                            "Bv2wAvIs29jCFEw&oe=68641D92",
+//                    likes = 100,
+//                    message =
+//                        "Para los q intentan entender, a franco lo paran y sale atrás de " +
+//                            "Sainz y el equipo le pide q intente pasarlo, el alpine en " +
+//                            "recta no puede pasar nunca a un motor mercedes, resultado? " +
+//                            "Derrite los neumáticos por el aire sucio y encima en su stint " +
+//                            "más largo, el equipo ya pidió",
+//                )
+//            }.shuffled()
+//        }
+
+//        fun fetchPosts() {
+//            viewModelScope.launch {
+//                try {
+//                    val posts = generarPostsMock()
+//                    _uiState.value = PostUIState(FeedUIState.Success(posts))
+//                } catch (exception: Exception) {
+//                    Log.e("HomeViewModel", "Error fetching posts", exception)
+//                    _uiState.value = PostUIState(FeedUIState.Error("Error"))
+//                }
+//            }
+//        }
     }

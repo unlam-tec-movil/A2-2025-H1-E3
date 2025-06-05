@@ -23,5 +23,5 @@ class AuthToken
             // preferences.getString("Authorization", "")
             set(value) = preferences.edit { putString("Authorization", value) }
 
-        val appToken: String = "178925abbddc62071b5043cd02bddf81cdf87e58582c83dd14e57f636631da1e"
+        val appToken: String = ar.edu.unlam.mobile.scaffolding.BuildConfig.API_KEY
     }

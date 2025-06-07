@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,7 +37,6 @@ class HomeViewModel
         // Mutable State Flow contiene un objeto de estado mutable. Simplifica la operación de
         // actualización de información y de manejo de estados de una aplicación: Cargando, Error, Éxito
         // (https://developer.android.com/kotlin/flow/stateflow-and-sharedflow)
-        // _helloMessage State es el estado del componente "HelloMessage" inicializado como "Cargando"
 
         // _Ui State es el estado general del view model.
         private val _uiState = MutableStateFlow(PostUIState(FeedUIState.Loading))
@@ -57,12 +55,12 @@ class HomeViewModel
                     val posts = postService.fetchPosts()
                     _uiState.value = PostUIState(FeedUIState.Success(posts))
                 } catch (exception: Exception) {
-                    Log.e("HomeViewModel", "Error cargando posts", exception)
-                    _uiState.value = PostUIState(FeedUIState.Error("Error"))
+                    _uiState.value = PostUIState(FeedUIState.Error("Error cargando el feed"))
                 }
             }
         }
-        // ESTO NO VA SON DATOS DE PRUEBA HASTA QUE ANDE LA API
+
+// ESTO NO VA SON DATOS DE PRUEBA HASTA QUE ANDE LA API
 //        private fun generarPostsMock(): List<Post> {
 //            // delay(5000L)
 //            return List(1000) { index ->

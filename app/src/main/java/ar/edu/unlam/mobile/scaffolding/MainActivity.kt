@@ -3,10 +3,12 @@ package ar.edu.unlam.mobile.scaffolding
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -15,12 +17,12 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
@@ -54,11 +56,21 @@ fun MainScreen() {
     // a través del back stack
     val controller = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
+    val navBackStackEntry = controller.currentBackStackEntryAsState()
     Scaffold(
         bottomBar = { BottomBar(controller = controller) },
         floatingActionButton = {
-            IconButton(onClick = { controller.navigate("home") }) {
-                Icon(Icons.Filled.Home, contentDescription = "Home")
+            if (navBackStackEntry.value?.destination?.route != "addPost") {
+                IconButton(
+                    modifier =
+                        Modifier.background(
+                            MaterialTheme.colorScheme.primaryContainer,
+                            CircleShape,
+                        ),
+                    onClick = { controller.navigate("home") },
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Crear Post")
+                }
             }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -71,15 +83,8 @@ fun MainScreen() {
             composable("home") {
                 // Home es el componente en sí que es el destino de navegación.
                 HomeScreen(
+                    snackbarHostState = snackbarHostState,
                     modifier = Modifier.padding(paddingValue),
-                    onError = { message ->
-                        LaunchedEffect(message) {
-                            snackbarHostState.showSnackbar(
-                                message = message,
-                                actionLabel = "Cerrar",
-                            )
-                        }
-                    },
                 )
             }
             composable(

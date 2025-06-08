@@ -24,6 +24,10 @@ fun HomeScreen(
 ) {
     val uiState: PostUIState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchPosts()
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },

@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
+import ar.edu.unlam.mobile.scaffolding.data.mappers.toDomain
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.post.repository.IPostRepository
 import kotlinx.coroutines.Dispatchers
@@ -12,11 +13,39 @@ class PostRepository(
     // Implementación para el repositorio de Post
     private val apiService: ApiService,
 ) : IPostRepository {
-    // Documentacion de Flow (Ver dispositiva de clase)
-    // https://developer.android.com/kotlin/flow?hl=es-419
-    override suspend fun getPosts(): Flow<List<Post>> =
+// Documentacion de Flow (Tambien ver dispositiva de clase)
+// https://developer.android.com/kotlin/flow?hl=es-419
+// Usamos Flow porque nos ofrece varias ventajas frente a una simple llamada suspend que devuelva una lista estática:
+// 1. Reactividad
+// Un Flow<T> representa una secuencia asíncrona de valores que van llegando con el tiempo.
+// Si más adelante tu fuente de datos (por ejemplo, un cache local o un push del servidor) emite
+// nuevos posts, tu ViewModel puede seguir recibiendo esas actualizaciones sin volver
+// a pedir ttodo manualmente.
+
+// 2. Operadores Funcionales
+// Con Flow podés aplicar operadores como map, filter, debounce, retry, etc.,
+// directamente en el nivel de dominio o de repositorio, antes de que la UI los consuma.
+// Eso te da un pipeline muy flexible para transformar o filtrar datos.
+
+// 3. Control de Contexto y Concurrencia
+// flowOn(Dispatchers.IO) te permite mover ttodo el bloque de emisión (la llamada a la API)
+// a un hilo de I/O, sin “ensuciar” tu lógica de negocio con detalles de concurrencia.
+// Automáticamente respeta cancelaciones: si cierras la pantalla o cancelás la corrutina,
+// la recolección del flujo se detiene.
+
+// 4. Cold Streams (Flujos Fríos)
+// Un Flow es “frío”: no hace nada hasta que alguien lo colecciona.
+// Eso significa que podés definir tu Use Case para entregar un Flow, y cada consumidor
+// decidirá cuándo y cuántas veces iniciarlo.
+
+// 5. Integración con StateFlow / SharedFlow
+// En tu ViewModel, al convertir el Flow<List<Post>> en un StateFlow (o exponerlo directamente),
+// mantenés un estado observable que la UI puede suscribirse y
+// actualizarse automáticamente cada vez que cambia.
+
+    override fun getPosts(): Flow<List<Post>> =
         flow {
             val response = apiService.getFeed()
-            emit(response)
+            emit(response.map { it.toDomain() })
         }.flowOn(Dispatchers.IO)
 }

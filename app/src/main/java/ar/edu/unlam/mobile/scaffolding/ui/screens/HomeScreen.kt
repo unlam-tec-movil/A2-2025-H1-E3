@@ -11,9 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.Feed
 
 @Composable
@@ -21,11 +24,30 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
+    navController: NavController,
 ) {
     val uiState: PostUIState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchPosts()
+    // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
+    val shouldRefreshFlow =
+        navController
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getStateFlow("shouldRefresh", false)
+
+    // 2. Lo convertimos a State<Bool> con collectAsState
+    val shouldRefresh by shouldRefreshFlow
+        ?.collectAsState(initial = false)
+        ?: remember { mutableStateOf(false) }
+
+    // 3. Cuando cambie a true, lo limpiamos y refrescamos
+    LaunchedEffect(shouldRefresh) {
+        if (shouldRefresh) {
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.remove<Boolean>("shouldRefresh")
+            viewModel.fetchPosts()
+        }
     }
 
     Scaffold(

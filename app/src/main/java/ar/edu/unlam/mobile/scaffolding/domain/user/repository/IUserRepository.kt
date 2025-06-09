@@ -6,4 +6,11 @@ interface IUserRepository {
         email: String,
         password: String,
     ): String
+
+    suspend fun login(
+        email: String,
+        password: String,
+    ): String
+
+    suspend fun isUserLogged(): Boolean
 }

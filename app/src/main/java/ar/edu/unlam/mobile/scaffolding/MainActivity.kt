@@ -129,7 +129,25 @@ fun MainScreen() {
                 )
             }
 
-            composable("addPost") { CreatePostScreen(navController = controller) }
+            // Sin parámetros (nuevo post)
+            composable("addPost") {
+                CreatePostScreen(
+                    navController = controller,
+                    backStackEntry = it,
+                )
+            }
+            // Con parámetros (cita de post)
+            composable(
+                route = "addPost/{id}/{author}/{message}",
+                arguments =
+                    listOf(
+                        navArgument("id") { type = NavType.IntType },
+                        navArgument("author") { type = NavType.StringType },
+                        navArgument("message") { type = NavType.StringType },
+                    ),
+            ) { backStackEntry ->
+                CreatePostScreen(navController = controller, backStackEntry = backStackEntry)
+            }
         }
     }
 }

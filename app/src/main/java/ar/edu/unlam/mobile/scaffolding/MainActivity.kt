@@ -19,16 +19,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AuthToken
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.QuotesScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.SignInScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
@@ -62,20 +61,23 @@ fun MainScreen() {
     val navBackStackEntry = controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
-    val context = LocalContext.current
-    val tokenManager = remember { AuthToken(context) }
-    val startDestination = if (tokenManager.userToken.isNullOrEmpty()) "signIn" else "home"
+    // agregamos las rutas donde queremos que no se vea la bottom bar o el fab
+    val hideFabRoutes = listOf("addPost", "login", "signIn", "quotes")
+    val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes")
+
+    val shouldHideFab = hideFabRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
+    val shouldHideBottomBar = hideBottomBarRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
 
     Scaffold(
         // oculta la nav bar en pantalla de registro
         bottomBar = {
-            if (currentRoute != "signIn") {
+            if (!shouldHideBottomBar) {
                 BottomBar(controller = controller)
             }
         },
         floatingActionButton = {
-            // oculta el botón en pantalla de registro
-            if (currentRoute != "addPost" && currentRoute != "signIn") {
+            // oculta el botón en algunas pantallas
+            if (!shouldHideFab) {
                 IconButton(
                     modifier =
                         Modifier.background(
@@ -92,7 +94,7 @@ fun MainScreen() {
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.
-        NavHost(navController = controller, startDestination = startDestination) {
+        NavHost(navController = controller, startDestination = "home") {
             // composable es el componente que se usa para definir un destino de navegación.
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
             composable("home") {
@@ -115,6 +117,15 @@ fun MainScreen() {
             ) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getString("id") ?: "1"
                 UserScreen(userId = id)
+            }
+            composable("quotes/{postId}") { backStackEntry ->
+                val postId = backStackEntry.arguments?.getString("postId")?.toIntOrNull() ?: 0
+                QuotesScreen(
+                    postId = postId,
+                    navController = controller,
+                    snackbarHostState = snackbarHostState,
+                    modifier = Modifier.padding(paddingValue),
+                )
             }
         }
     }

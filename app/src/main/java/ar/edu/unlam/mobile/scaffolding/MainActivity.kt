@@ -30,6 +30,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.QuotesScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.SignInScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.CreatePostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -84,7 +85,7 @@ fun MainScreen() {
                             MaterialTheme.colorScheme.primaryContainer,
                             CircleShape,
                         ),
-                    onClick = { controller.navigate("home") },
+                    onClick = { controller.navigate("addPost") },
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Crear Post")
                 }
@@ -127,6 +128,8 @@ fun MainScreen() {
                     modifier = Modifier.padding(paddingValue),
                 )
             }
+
+            composable("addPost") { CreatePostScreen(navController = controller) }
         }
     }
 }

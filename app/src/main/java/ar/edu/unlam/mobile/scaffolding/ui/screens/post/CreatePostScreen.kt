@@ -34,9 +34,8 @@ fun CreatePostScreen(
 
     when (val createPostState = uiState.createPostUiState) {
         is CreatePostUIState.Success -> {
-            LaunchedEffect(Unit) {
-                navController.popBackStack()
-            }
+            navController.previousBackStackEntry?.savedStateHandle?.set("shouldRefresh", true)
+            navController.popBackStack()
         }
         is CreatePostUIState.Error -> {
             Toast.makeText(LocalContext.current, createPostState.message, Toast.LENGTH_SHORT).show()

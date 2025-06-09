@@ -22,4 +22,9 @@ interface ApiService {
     suspend fun getQuotes(
         @Path("tuit_id") postId: Int,
     ): List<PostResponseDto>
+
+    @POST("/api/v1/me/tuits")
+    suspend fun createPost(
+        @Body request: PostResponseDto,
+    ): Response<Unit>
 }

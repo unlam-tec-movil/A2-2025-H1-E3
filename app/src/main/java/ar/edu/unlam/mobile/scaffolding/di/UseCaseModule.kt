@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
 import ar.edu.unlam.mobile.scaffolding.domain.post.repository.IPostRepository
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetPostsUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetQuotesUseCase
 import dagger.Module
@@ -17,4 +18,7 @@ object UseCaseModule {
 
     @Provides
     fun provideGetQuotesUseCase(repo: IPostRepository): GetQuotesUseCase = GetQuotesUseCase(repo)
+
+    @Provides
+    fun provideCreatePostUseCase(repo: IPostRepository): CreatePostUseCase = CreatePostUseCase(repo)
 }

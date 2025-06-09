@@ -7,4 +7,6 @@ interface IPostRepository {
     fun getPosts(): Flow<List<Post>>
 
     fun getQuotes(postId: Int): Flow<List<Post>>
+
+    suspend fun createPost(post: Post)
 }

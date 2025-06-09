@@ -48,4 +48,10 @@ class PostRepository(
             val response = apiService.getFeed()
             emit(response.map { it.toDomain() })
         }.flowOn(Dispatchers.IO)
+
+    override fun getQuotes(postId: Int): Flow<List<Post>> =
+        flow {
+            val response = apiService.getQuotes(postId)
+            emit(response.map { it.toDomain() })
+        }.flowOn(Dispatchers.IO)
 }

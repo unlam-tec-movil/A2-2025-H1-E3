@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
     @GET("api/v1/me/feed")
@@ -16,4 +17,9 @@ interface ApiService {
     suspend fun signIn(
         @Body signInRequest: SignInRequest,
     ): Response<SignInResponse>
+
+    @GET("/api/v1/me/tuits/{tuit_id}/replies")
+    suspend fun getQuotes(
+        @Path("tuit_id") postId: Int,
+    ): List<PostResponseDto>
 }

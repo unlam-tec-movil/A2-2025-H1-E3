@@ -15,6 +15,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 fun Feed(
     posts: List<Post>,
     modifier: Modifier,
+    onOptionsClick: (Post) -> Unit,
 ) {
     LazyColumn(
         modifier =
@@ -28,7 +29,7 @@ fun Feed(
                 ),
     ) {
         items(posts) { post ->
-            PostCard(post, onLikeClick = {}, onReplyClick = {})
+            PostCard(post, onLikeClick = {}, onReplyClick = { onOptionsClick(post) })
         }
     }
 }

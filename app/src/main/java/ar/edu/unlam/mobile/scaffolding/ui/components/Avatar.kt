@@ -1,8 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.size
@@ -16,17 +13,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.utils.decodeBase64ToBitmap
 import coil.compose.AsyncImage
-import java.io.ByteArrayInputStream
-
-fun decodeBase64ToBitmap(dataUrl: String): Bitmap? =
-    try {
-        val base64Part = dataUrl.substringAfter("base64,", "")
-        val decodedBytes = Base64.decode(base64Part, Base64.DEFAULT)
-        BitmapFactory.decodeStream(ByteArrayInputStream(decodedBytes))
-    } catch (_: Exception) {
-        null
-    }
 
 @Composable
 fun Avatar(

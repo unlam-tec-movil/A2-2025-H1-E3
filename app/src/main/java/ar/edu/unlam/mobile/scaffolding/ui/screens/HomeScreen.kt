@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.Feed
+import ar.edu.unlam.mobile.scaffolding.utils.encode
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,8 +93,14 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 TextButton(onClick = {
                     isSheetOpen = false
-                    // Acción: Ver cita
-                    navController.navigate("addPost?quotedPostId=${selectedPost!!.id}")
+                    // Acción: Ver cita: Navegación con parámetros codificados
+                    val id = selectedPost!!.id
+                    val author = selectedPost!!.author.encode()
+                    val message = selectedPost!!.message.encode()
+                    // navController.navigate("addPost?id=$id&author=$author&message=$message")
+
+                    val route = "addPost/$id/${author.encode()}/${message.encode()}"
+                    navController.navigate(route)
                 }) {
                     Text("Responder")
                 }

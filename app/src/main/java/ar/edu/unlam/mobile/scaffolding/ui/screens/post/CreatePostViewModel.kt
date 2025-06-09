@@ -56,6 +56,7 @@ class CreatePostViewModel
             author: String,
             avatarUrl: String,
             isDraft: Boolean,
+            parentId: Int? = null,
         ) {
             _uiState.value = CreatePostState(CreatePostUIState.Loading)
             viewModelScope.launch {
@@ -68,7 +69,7 @@ class CreatePostViewModel
                             liked = false,
                             likes = 0,
                             message = message,
-                            parentId = 0,
+                            parentId = parentId ?: 0,
                             avatarUrl = avatarUrl,
                         )
                     if (!isDraft) {

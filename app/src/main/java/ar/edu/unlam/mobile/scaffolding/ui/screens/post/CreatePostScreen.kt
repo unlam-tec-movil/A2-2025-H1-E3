@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,16 +23,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.CustomHeader
+import ar.edu.unlam.mobile.scaffolding.utils.decode
 
 @Composable
 fun CreatePostScreen(
     viewModel: CreatePostViewModel = hiltViewModel(),
     navController: NavController,
+    backStackEntry: NavBackStackEntry,
 ) {
     val uiState: CreatePostState by viewModel.uiState.collectAsState()
     var message by remember { mutableStateOf("") }
+
+    // Leer argumento de manera segura
+    val id = backStackEntry.arguments?.getInt("id")
+    val author = backStackEntry.arguments?.getString("author")?.decode()
+    val quotedMessage = backStackEntry.arguments?.getString("message")?.decode()
 
     when (val createPostState = uiState.createPostUiState) {
         is CreatePostUIState.Success -> {
@@ -64,6 +74,17 @@ fun CreatePostScreen(
                         .padding(16.dp)
                         .fillMaxSize(),
             ) {
+                if (id != null && !quotedMessage.isNullOrBlank() && !author.isNullOrBlank()) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    ) {
+                        Text(
+                            text = "Respondiendo a $author: $quotedMessage",
+                            modifier = Modifier.padding(8.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
                 OutlinedTextField(
                     modifier =
                         Modifier
@@ -94,6 +115,7 @@ fun CreatePostScreen(
                             author = "",
                             avatarUrl = "",
                             isDraft = false,
+                            parentId = id,
                         )
                     },
                 ) {

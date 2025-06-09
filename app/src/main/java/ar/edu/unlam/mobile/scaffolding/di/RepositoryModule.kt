@@ -2,7 +2,9 @@ package ar.edu.unlam.mobile.scaffolding.di
 
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.repository.IPostRepository
+import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,4 +16,7 @@ object RepositoryModule {
     // --- Repositorios ---
     @Provides
     fun providerPostRepository(apiService: ApiService): IPostRepository = PostRepository(apiService)
+
+    @Provides
+    fun providerUserRepository(apiService: ApiService): IUserRepository = UserRepository(apiService)
 }

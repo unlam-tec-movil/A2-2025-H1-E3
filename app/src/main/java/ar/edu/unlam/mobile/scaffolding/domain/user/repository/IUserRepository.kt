@@ -5,5 +5,5 @@ interface IUserRepository {
         name: String,
         email: String,
         password: String,
-    )
+    ): String
 }

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
-import ar.edu.unlam.mobile.scaffolding.domain.post.services.PostService
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,7 +41,7 @@ data class CreatePostState(
 class CreatePostViewModel
     @Inject
     constructor(
-        private val postService: PostService,
+        private val createPostUseCase: CreatePostUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(CreatePostState(CreatePostUIState.Idle))
         val uiState = _uiState.asStateFlow()
@@ -72,7 +72,7 @@ class CreatePostViewModel
                             avatarUrl = avatarUrl,
                         )
                     if (!isDraft) {
-                        postService.createPost(newPost)
+                        createPostUseCase(newPost)
                         _uiState.value = CreatePostState(CreatePostUIState.Success(newPost))
                     } else {
                         _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(newPost))

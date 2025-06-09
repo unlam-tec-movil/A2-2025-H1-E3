@@ -27,7 +27,7 @@ fun SignInScreen(
 ) {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    LocalContext.current
 
     Column(
         modifier =

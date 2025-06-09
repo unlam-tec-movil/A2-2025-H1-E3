@@ -100,6 +100,7 @@ fun MainScreen() {
                 HomeScreen(
                     snackbarHostState = snackbarHostState,
                     modifier = Modifier.padding(paddingValue),
+                    navController = controller,
                 )
             }
             composable("signIn") {

@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.data.datasources.network
 
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignInRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.SignInResponse
+import ar.edu.unlam.mobile.scaffolding.data.models.CreatePostRequestDto
 import ar.edu.unlam.mobile.scaffolding.data.models.PostResponseDto
 import ar.edu.unlam.mobile.scaffolding.data.models.ReplyRequestDto
 import retrofit2.Response
@@ -26,7 +27,7 @@ interface ApiService {
 
     @POST("/api/v1/me/tuits")
     suspend fun createPost(
-        @Body request: PostResponseDto,
+        @Body request: CreatePostRequestDto,
     ): Response<Unit>
 
     @POST("/api/v1/me/tuits/{tuit_id}/replies")

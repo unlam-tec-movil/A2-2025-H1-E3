@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -61,16 +60,18 @@ class CreatePostViewModel
             _uiState.value = CreatePostState(CreatePostUIState.Loading)
             viewModelScope.launch {
                 try {
-                    if (!isDraft) {
-                        Log.d("mensaje: ", message)
-//                        if (parentId != null && parentId != 0) {
-                        createPostUseCase(message)
-//                        } else {
-                        // createReplyUseCase(parentId!!, message)
-//                        }
-                        _uiState.value = CreatePostState(CreatePostUIState.Success(message))
-                    } else {
-                        _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(message))
+                    when {
+                        isDraft -> {
+                            _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(message))
+                        }
+                        parentId != null -> {
+                            createReplyUseCase(parentId, message)
+                            _uiState.value = CreatePostState(CreatePostUIState.Success(message))
+                        }
+                        else -> {
+                            createPostUseCase(message)
+                            _uiState.value = CreatePostState(CreatePostUIState.Success(message))
+                        }
                     }
                 } catch (exception: Exception) {
                     _uiState.value = CreatePostState(CreatePostUIState.Error("No se pudo crear el post ${exception.message}"))

@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 fun FavUsersScreen(
     navController: NavController,
     viewModel: FavoriteUsersViewModel = hiltViewModel()
-){
+) {
     Column (
         modifier = Modifier
             .fillMaxSize()

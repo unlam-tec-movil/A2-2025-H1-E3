@@ -7,6 +7,6 @@ import javax.inject.Inject
 @HiltViewModel
 class FavoriteUsersViewModel
 @Inject
-constructor():ViewModel(){
+constructor():ViewModel() {
 
 }

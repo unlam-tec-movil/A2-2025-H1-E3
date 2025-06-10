@@ -17,8 +17,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,8 +30,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.QuotesScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.SignInScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.SplashViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.CreatePostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
@@ -53,10 +58,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
     // Controller es el elemento que nos permite navegar entre pantallas. Tiene las acciones
     // para navegar como naviegate y también la información de en dónde se "encuentra" el usuario
     // a través del back stack
+    val startDestination by viewModel.startDestination.collectAsState()
     val controller = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
     val navBackStackEntry = controller.currentBackStackEntryAsState()
@@ -67,7 +73,8 @@ fun MainScreen() {
     val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes")
 
     val shouldHideFab = hideFabRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
-    val shouldHideBottomBar = hideBottomBarRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
+    val shouldHideBottomBar =
+        hideBottomBarRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
 
     Scaffold(
         // oculta la nav bar en pantalla de registro
@@ -95,7 +102,7 @@ fun MainScreen() {
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.
-        NavHost(navController = controller, startDestination = "home") {
+        NavHost(navController = controller, startDestination = startDestination) {
             // composable es el componente que se usa para definir un destino de navegación.
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
             composable("home") {
@@ -105,6 +112,13 @@ fun MainScreen() {
                     modifier = Modifier.padding(paddingValue),
                     navController = controller,
                 )
+            }
+            composable("login") {
+                LoginScreen(onLoginSuccess = {
+                    controller.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                })
             }
             composable("signIn") {
                 SignInScreen(

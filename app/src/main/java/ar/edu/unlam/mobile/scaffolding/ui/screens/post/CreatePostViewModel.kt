@@ -1,10 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,6 +44,7 @@ class CreatePostViewModel
     @Inject
     constructor(
         private val createPostUseCase: CreatePostUseCase,
+        private val createReplyUseCase: CreateReplyUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(CreatePostState(CreatePostUIState.Idle))
         val uiState = _uiState.asStateFlow()
@@ -73,7 +76,12 @@ class CreatePostViewModel
                             avatarUrl = avatarUrl,
                         )
                     if (!isDraft) {
-                        createPostUseCase(newPost)
+                        Log.d("id: ", parentId.toString())
+                        if (parentId != null && parentId != 0) {
+                            createPostUseCase(newPost)
+                        } else {
+                            // createReplyUseCase(parentId!!, message)
+                        }
                         _uiState.value = CreatePostState(CreatePostUIState.Success(newPost))
                     } else {
                         _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(newPost))

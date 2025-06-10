@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AuthToken
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
@@ -9,6 +10,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -17,6 +19,9 @@ object RepositoryModule {
     @Provides
     fun providerPostRepository(apiService: ApiService): IPostRepository = PostRepository(apiService)
 
-    @Provides
-    fun providerUserRepository(apiService: ApiService): IUserRepository = UserRepository(apiService)
+    @Provides @Singleton
+    fun providerUserRepository(
+        apiService: ApiService,
+        authToken: AuthToken,
+    ): IUserRepository = UserRepository(apiService, authToken)
 }

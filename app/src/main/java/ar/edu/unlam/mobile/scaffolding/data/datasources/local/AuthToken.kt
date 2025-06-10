@@ -12,9 +12,7 @@ class AuthToken(
 
     var userToken: String?
         get() =
-            ""
-        // Quitar el token hardcodeado y dejar esta linea cuando este la pantalla de login
-        // preferences.getString("Authorization", "")
+            preferences.getString("Authorization", "")
         set(value) = preferences.edit { putString("Authorization", value) }
 
     val appToken: String = ar.edu.unlam.mobile.scaffolding.BuildConfig.API_KEY

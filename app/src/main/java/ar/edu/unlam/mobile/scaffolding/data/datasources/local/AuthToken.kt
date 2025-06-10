@@ -12,12 +12,11 @@ class AuthToken(
 
     var userToken: String?
         get() =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpb2xlcm9hcmVzQGhvd" +
-                "G1haWwuY29tIiwiZXhwIjoxNzUxNTc0Njk1LCJpc3MiOiJ1bmxhbS10dWl0ZXIiLCJu" +
-                "YW1lIjoidmlvbGVyb2FyZXNAaG90bWFpbC5jb20iLCJzdWIiOjE4NX0.EZE1asen8XGSZFW" +
-                "l2d-FNmtF7TNfXb7U6DG1qX2-vDc"
-        // Quitar el token hardcodeado y dejar esta linea cuando este la pantalla de login
-        // preferences.getString("Authorization", "")
+            // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFubmFAZ21haWwuY29tIiwiZXh" +
+            // "wIjoxNzUyMDkzMTc3LCJpc3MiOiJ1bmxhbS10dWl0ZXIiLCJuYW1lIjoiYW5uYUBnbWFpbC5j" +
+            // "b20iLCJzdWIiOjE5OH0.lZxrpW1-T7roJxN7_vFg1NCeOrkn-W5XlaBeV1m8DfE"
+            // Quitar el token hardcodeado y dejar esta linea cuando este la pantalla de login
+            preferences.getString("Authorization", "")
         set(value) = preferences.edit { putString("Authorization", value) }
 
     val appToken: String = ar.edu.unlam.mobile.scaffolding.BuildConfig.API_KEY

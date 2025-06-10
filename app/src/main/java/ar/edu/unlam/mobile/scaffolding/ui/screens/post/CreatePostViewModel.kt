@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,11 +20,11 @@ sealed interface CreatePostUIState {
     data object Idle : CreatePostUIState
 
     data class Success(
-        val post: Post,
+        val message: String,
     ) : CreatePostUIState
 
     data class SuccessDraft(
-        val post: Post,
+        val message: String,
     ) : CreatePostUIState
 
     data object Loading : CreatePostUIState
@@ -56,35 +55,22 @@ class CreatePostViewModel
 
         fun addPost(
             message: String,
-            author: String,
-            avatarUrl: String,
             isDraft: Boolean,
             parentId: Int? = null,
         ) {
             _uiState.value = CreatePostState(CreatePostUIState.Loading)
             viewModelScope.launch {
                 try {
-                    val newPost =
-                        Post(
-                            id = (0..999).random(),
-                            author = author,
-                            date = getCurrentDate(),
-                            liked = false,
-                            likes = 0,
-                            message = message,
-                            parentId = parentId ?: 0,
-                            avatarUrl = avatarUrl,
-                        )
                     if (!isDraft) {
-                        Log.d("id: ", parentId.toString())
-                        if (parentId != null && parentId != 0) {
-                            createPostUseCase(newPost)
-                        } else {
-                            // createReplyUseCase(parentId!!, message)
-                        }
-                        _uiState.value = CreatePostState(CreatePostUIState.Success(newPost))
+                        Log.d("mensaje: ", message)
+//                        if (parentId != null && parentId != 0) {
+                        createPostUseCase(message)
+//                        } else {
+                        // createReplyUseCase(parentId!!, message)
+//                        }
+                        _uiState.value = CreatePostState(CreatePostUIState.Success(message))
                     } else {
-                        _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(newPost))
+                        _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(message))
                     }
                 } catch (exception: Exception) {
                     _uiState.value = CreatePostState(CreatePostUIState.Error("No se pudo crear el post ${exception.message}"))

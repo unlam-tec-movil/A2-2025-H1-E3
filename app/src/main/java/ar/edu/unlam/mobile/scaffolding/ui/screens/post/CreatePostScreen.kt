@@ -99,8 +99,6 @@ fun CreatePostScreen(
                     onClick = {
                         viewModel.addPost(
                             message = message,
-                            author = "",
-                            avatarUrl = "",
                             isDraft = true,
                         )
                     },
@@ -112,8 +110,6 @@ fun CreatePostScreen(
                     onClick = {
                         viewModel.addPost(
                             message = message,
-                            author = "",
-                            avatarUrl = "",
                             isDraft = false,
                             parentId = id,
                         )

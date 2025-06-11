@@ -29,7 +29,13 @@ fun Feed(
                 ),
     ) {
         items(posts) { post ->
-            PostCard(post, onLikeClick = {}, onReplyClick = { onOptionsClick(post) })
+            val repliesCount = posts.count { it.parentId == post.id }
+            PostCard(
+                post,
+                repliesCount,
+                onLikeClick = {},
+                onReplyClick = { onOptionsClick(post) },
+            )
         }
     }
 }

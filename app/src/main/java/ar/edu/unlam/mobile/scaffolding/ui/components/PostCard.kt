@@ -20,6 +20,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 @Composable
 fun PostCard(
     post: Post,
+    repliesCount: Int,
     onLikeClick: () -> Unit,
     onReplyClick: () -> Unit,
 ) {
@@ -46,6 +47,7 @@ fun PostCard(
             // Actions
             PostActions(
                 post = post,
+                repliesCount = repliesCount,
                 onReplyClick = onReplyClick,
                 onLikeClick = onLikeClick,
             )

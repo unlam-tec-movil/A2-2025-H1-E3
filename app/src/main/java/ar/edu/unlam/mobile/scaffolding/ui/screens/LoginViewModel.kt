@@ -11,29 +11,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel
-@Inject
-constructor(
-    private val loginUseCase: LoginUseCase,
-) : ViewModel() {
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    @Inject
+    constructor(
+        private val loginUseCase: LoginUseCase,
+    ) : ViewModel() {
+        private val _isLoading = MutableStateFlow(false)
+        val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun login(
-        email: String,
-        password: String,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit,
-    ) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                loginUseCase(email, password)
-                onSuccess()
-            } catch (e: Exception) {
-                onError(e.message ?: "Error desconocido")
-            } finally {
-                _isLoading.value = false
+        fun login(
+            email: String,
+            password: String,
+            onSuccess: () -> Unit,
+            onError: (String) -> Unit,
+        ) {
+            viewModelScope.launch {
+                _isLoading.value = true
+                try {
+                    loginUseCase(email, password)
+                    onSuccess()
+                } catch (e: Exception) {
+                    onError(e.message ?: "Error desconocido")
+                } finally {
+                    _isLoading.value = false
+                }
             }
         }
     }
-}

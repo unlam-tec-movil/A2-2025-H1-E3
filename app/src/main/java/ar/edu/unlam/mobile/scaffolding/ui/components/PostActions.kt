@@ -57,10 +57,12 @@ fun PostActions(
                 tint = heartColor,
             )
         }
-        Text(
-            text = likeCountText,
-            fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (post.likes > 0) {
+            Text(
+                text = likeCountText,
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }

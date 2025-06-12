@@ -7,6 +7,7 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.SignInR
 import ar.edu.unlam.mobile.scaffolding.data.models.CreatePostRequestDto
 import ar.edu.unlam.mobile.scaffolding.data.models.PostResponseDto
 import ar.edu.unlam.mobile.scaffolding.data.models.ReplyRequestDto
+import ar.edu.unlam.mobile.scaffolding.data.models.UserProfileResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -42,4 +43,7 @@ interface ApiService {
         @Path("tuit_id") postId: Int,
         @Body request: ReplyRequestDto,
     ): Response<Unit>
+
+    @GET("api/vi/me/profile")
+    suspend fun getUserProfile(): UserProfileResponseDto
 }

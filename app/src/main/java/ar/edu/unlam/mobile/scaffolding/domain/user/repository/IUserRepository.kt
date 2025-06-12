@@ -1,5 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.domain.user.repository
 
+import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
+
 interface IUserRepository {
     suspend fun register(
         name: String,
@@ -13,4 +15,6 @@ interface IUserRepository {
     ): String
 
     suspend fun isUserLogged(): Boolean
+
+    suspend fun getUserProfile(): User
 }

@@ -130,11 +130,9 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
                 )
             }
             composable(
-                route = "user/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.StringType }),
-            ) { navBackStackEntry ->
-                val id = navBackStackEntry.arguments?.getString("id") ?: "1"
-                UserScreen(userId = id)
+                route = "user",
+            ) {
+                UserScreen(navController = controller)
             }
             composable("quotes/{postId}") { backStackEntry ->
                 val postId = backStackEntry.arguments?.getString("postId")?.toIntOrNull() ?: 0

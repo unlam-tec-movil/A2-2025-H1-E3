@@ -1,14 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetPostsUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,9 +30,6 @@ sealed interface FeedUIState {
 
 data class PostUIState(
     val feedUiState: FeedUIState,
-    val user: User? = null,
-    val isUserLoading: Boolean = true,
-    val userError: String? = null,
 )
 
 @HiltViewModel
@@ -44,7 +38,6 @@ class HomeViewModel
     constructor(
         private val getPostsUseCase: GetPostsUseCase,
         private val getUserProfileUseCase: GetUserProfileUseCase,
-        private val logoutUseCase: LogoutUseCase,
     ) : ViewModel() {
         // Mutable State Flow contiene un objeto de estado mutable. Simplifica la operación de
         // actualización de información y de manejo de estados de una aplicación: Cargando, Error, Éxito
@@ -59,7 +52,6 @@ class HomeViewModel
 
         init {
             fetchPosts()
-            fetchUserProfile()
         }
 
         fun fetchPosts() {
@@ -87,25 +79,5 @@ class HomeViewModel
                             )
                     }
             }
-        }
-
-        fun fetchUserProfile() {
-            viewModelScope.launch {
-                try {
-                    val user = getUserProfileUseCase()
-                    Log.d("Usuario:", user.toString())
-                    _uiState.value = _uiState.value.copy(user = user, isUserLoading = false)
-                } catch (e: Exception) {
-                    _uiState.value =
-                        _uiState.value.copy(
-                            userError = e.message ?: "Error al cargar el perfil",
-                            isUserLoading = false,
-                        )
-                }
-            }
-        }
-
-        fun logout() {
-            logoutUseCase()
         }
     }

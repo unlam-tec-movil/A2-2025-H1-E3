@@ -37,11 +37,12 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    userSessionViewModel: UserSessionViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
     navController: NavController,
 ) {
     val uiState: PostUIState by viewModel.uiState.collectAsState()
-    val user = uiState.user
+    val user by userSessionViewModel.user.collectAsState()
 
     // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
     val shouldRefreshFlow =
@@ -61,7 +62,6 @@ fun HomeScreen(
                 ?.savedStateHandle
                 ?.remove<Boolean>("shouldRefresh")
             viewModel.fetchPosts()
-            viewModel.fetchUserProfile()
         }
     }
 
@@ -102,9 +102,10 @@ fun HomeScreen(
     if (showLogoutDialog) {
         LogoutConfirmationDialog(
             onConfirm = {
-                viewModel.logout()
-                navController.navigate("login") {
-                    popUpTo("home") { inclusive = true }
+                userSessionViewModel.logout {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
                 }
             },
             onDismiss = { showLogoutDialog = false },
@@ -145,7 +146,7 @@ fun HomeScreen(
                         AnimatedVisibility(visible = showHeader) {
                             UserHeader(
                                 user = user,
-                                onProfileClick = { navController.navigate("user/${user?.name}") },
+                                onProfileClick = { navController.navigate("user") },
                                 onLogoutClick = { showLogoutDialog = true },
                             )
                         }

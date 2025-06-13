@@ -84,11 +84,11 @@ class LoginViewModel
                 try {
                     loginUseCase(_uiState.value.email, _uiState.value.password)
                     onSuccess()
-            } catch (e: Exception) {
-                onError(e.message ?: "Error desconocido")
-            } finally {
-                setLoading(false)
+                } catch (e: Exception) {
+                    onError(e.message ?: "Error desconocido")
+                } finally {
+                    setLoading(false)
+                }
             }
         }
     }
-}

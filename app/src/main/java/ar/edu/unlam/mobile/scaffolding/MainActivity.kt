@@ -114,11 +114,14 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
                 )
             }
             composable("login") {
-                LoginScreen(onLoginSuccess = {
-                    controller.navigate("home") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                })
+                LoginScreen(
+                    onLoginSuccess = {
+                        controller.navigate("home") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    },
+                    onNavigateToRegister = { controller.navigate("signIn") },
+                )
             }
             composable("signIn") {
                 SignInScreen(

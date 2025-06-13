@@ -1,11 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,8 +19,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomTextField(
@@ -27,56 +26,48 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     label: String,
     isPassword: Boolean = false,
+    error: String? = null,
     keyboardAction: ImeAction,
 ) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
     val keyboardOptions =
         KeyboardOptions.Default.copy(
             imeAction = keyboardAction,
             keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text,
         )
 
-    val visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
+    val visualTransformation =
+        if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None
 
     OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
         modifier =
             Modifier
                 .fillMaxWidth(),
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        label = { Text(label) },
+        keyboardOptions = keyboardOptions,
+        visualTransformation = visualTransformation,
+        isError = error != null,
+        trailingIcon = {
+            if (isPassword) {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                    )
+                }
+            }
+        },
+        supportingText = {
+            if (error != null) {
+                Text(
+                    text = error,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.error,
+                )
+            }
+        },
     )
-}
-
-@Preview(showBackground = true, name = "Multiple TextFields")
-@Composable
-fun MultipleCustomTextFieldsPreview() {
-    var text1 by remember { mutableStateOf("") }
-    var text2 by remember { mutableStateOf("Hola") }
-    var password by remember { mutableStateOf("asd123") }
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        CustomTextField(
-            value = text1,
-            onValueChange = { text1 = it },
-            label = "Campo vacío",
-            keyboardAction = ImeAction.Next,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        CustomTextField(
-            value = text2,
-            onValueChange = { text2 = it },
-            label = "Campo con texto",
-            keyboardAction = ImeAction.Done,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        CustomTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = "Contraseña",
-            isPassword = true,
-            keyboardAction = ImeAction.Send,
-        )
-    }
 }

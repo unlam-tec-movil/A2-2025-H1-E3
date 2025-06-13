@@ -44,6 +44,6 @@ interface ApiService {
         @Body request: ReplyRequestDto,
     ): Response<Unit>
 
-    @GET("api/vi/me/profile")
+    @GET("api/v1/me/profile")
     suspend fun getUserProfile(): UserProfileResponseDto
 }

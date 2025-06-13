@@ -10,6 +10,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.IsUserLoggedInUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LoginUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LogoutUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,4 +43,7 @@ object UseCaseModule {
 
     @Provides
     fun provideGetUserProfileUseCase(repo: IUserRepository): GetUserProfileUseCase = GetUserProfileUseCase(repo)
+
+    @Provides
+    fun provideLogoutUseCase(authToken: AuthToken): LogoutUseCase = LogoutUseCase(authToken)
 }

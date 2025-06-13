@@ -1,8 +1,10 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -23,7 +25,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.Feed
+import ar.edu.unlam.mobile.scaffolding.ui.components.LogoutConfirmationDialog
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostOptionsBottomSheet
+import ar.edu.unlam.mobile.scaffolding.ui.components.UserHeader
+import ar.edu.unlam.mobile.scaffolding.ui.components.rememberHeaderVisibility
 import ar.edu.unlam.mobile.scaffolding.utils.encode
 import kotlinx.coroutines.launch
 
@@ -36,11 +41,11 @@ fun HomeScreen(
     navController: NavController,
 ) {
     val uiState: PostUIState by viewModel.uiState.collectAsState()
+    val user = uiState.user
 
     // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
     val shouldRefreshFlow =
-        navController
-            .currentBackStackEntry
+        navController.currentBackStackEntry
             ?.savedStateHandle
             ?.getStateFlow("shouldRefresh", false)
 
@@ -56,6 +61,7 @@ fun HomeScreen(
                 ?.savedStateHandle
                 ?.remove<Boolean>("shouldRefresh")
             viewModel.fetchPosts()
+            viewModel.fetchUserProfile()
         }
     }
 
@@ -85,6 +91,27 @@ fun HomeScreen(
         )
     }
 
+    // State y lógica para el scroll y visibilidad del header de la LazyColumn
+    val listState = rememberLazyListState()
+    val showHeader by rememberHeaderVisibility(listState)
+
+    // Estado para mostrar diálogo de confirmación logout
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    // Diálogo de confirmación de Logout
+    if (showLogoutDialog) {
+        LogoutConfirmationDialog(
+            onConfirm = {
+                viewModel.logout()
+                navController.navigate("login") {
+                    popUpTo("home") { inclusive = true }
+                }
+            },
+            onDismiss = { showLogoutDialog = false },
+            showDialog = showLogoutDialog,
+        )
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -104,12 +131,23 @@ fun HomeScreen(
             is FeedUIState.Success -> {
                 Feed(
                     posts = postState.posts,
+                    repliesMap = postState.repliesMap,
                     modifier = modifier.padding(paddingValues),
                     onOptionsClick = { post ->
                         selectedPost = post
                         isSheetOpen = true
                         coroutineScope.launch {
                             sheetState.show()
+                        }
+                    },
+                    listState = listState,
+                    header = {
+                        AnimatedVisibility(visible = showHeader) {
+                            UserHeader(
+                                user = user,
+                                onProfileClick = { navController.navigate("user/${user?.name}") },
+                                onLogoutClick = { showLogoutDialog = true },
+                            )
                         }
                     },
                 )

@@ -53,4 +53,14 @@ class UserRepository(
         } catch (e: Exception) {
             throw e
         }
+
+    override suspend fun getCachedUser(): User? = authToken.cachedUser
+
+    override suspend fun saveCachedUser(user: User) {
+        authToken.cachedUser = user
+    }
+
+    override suspend fun clearCachedUser() {
+        authToken.cachedUser = null
+    }
 }

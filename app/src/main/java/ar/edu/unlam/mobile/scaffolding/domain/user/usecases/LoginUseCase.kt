@@ -13,5 +13,8 @@ class LoginUseCase(
     ) {
         val token = userRepository.login(email, password)
         authToken.userToken = token
+
+        val user = userRepository.getUserProfile()
+        authToken.cachedUser = user
     }
 }

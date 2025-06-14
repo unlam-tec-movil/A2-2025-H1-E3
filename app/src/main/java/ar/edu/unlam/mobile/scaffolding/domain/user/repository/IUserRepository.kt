@@ -17,4 +17,10 @@ interface IUserRepository {
     suspend fun isUserLogged(): Boolean
 
     suspend fun getUserProfile(): User
+
+    suspend fun getCachedUser(): User?
+
+    suspend fun saveCachedUser(user: User)
+
+    suspend fun clearCachedUser()
 }

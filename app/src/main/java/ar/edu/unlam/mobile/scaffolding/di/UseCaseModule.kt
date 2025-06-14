@@ -7,10 +7,13 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetPostsUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetQuotesUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.ClearCachedUserUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetCachedUserUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.IsUserLoggedInUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LoginUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LogoutUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.SaveCachedUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,4 +49,13 @@ object UseCaseModule {
 
     @Provides
     fun provideLogoutUseCase(authToken: AuthToken): LogoutUseCase = LogoutUseCase(authToken)
+
+    @Provides
+    fun provideClearCachedUserUseCase(repo: IUserRepository): ClearCachedUserUseCase = ClearCachedUserUseCase(repo)
+
+    @Provides
+    fun provideGetCachedUserUseCase(repo: IUserRepository): GetCachedUserUseCase = GetCachedUserUseCase(repo)
+
+    @Provides
+    fun provideSaveCachedUserUseCase(repo: IUserRepository): SaveCachedUserUseCase = SaveCachedUserUseCase(repo)
 }

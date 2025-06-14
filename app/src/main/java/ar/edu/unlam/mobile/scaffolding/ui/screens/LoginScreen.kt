@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -20,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -29,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.CustomTextField
+import ar.edu.unlam.mobile.scaffolding.ui.components.StateButton
 
 @Composable
 fun LoginScreen(
@@ -37,8 +34,6 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
 ) {
     val context = LocalContext.current
-    // val isLoading by viewModel.isLoading.collectAsState()
-
     val uiState: LoginState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
@@ -52,7 +47,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.weight(.5f))
         // Logo de la app
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground), // imagen generica -> Agregar logo
+            painter = painterResource(id = R.drawable.logo_circle),
             contentDescription = "Logo de la app",
             modifier =
                 Modifier
@@ -80,31 +75,22 @@ fun LoginScreen(
             label = "Contraseña",
             isPassword = true,
             error = uiState.passwordError,
-            keyboardAction = ImeAction.Send,
+            keyboardAction = ImeAction.Done,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
+        StateButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Iniciar sesión",
+            isLoading = uiState.isLoading,
             onClick = {
                 viewModel.login(
                     onSuccess = onLoginSuccess,
                     onError = { Toast.makeText(context, it, Toast.LENGTH_LONG).show() },
                 )
             },
-            enabled = uiState.isLoginEnabled && !uiState.isLoading,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    modifier = Modifier.size(20.dp),
-                    strokeWidth = 2.dp,
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Iniciar sesión")
-        }
+        )
         Spacer(modifier = Modifier.weight(1.5f))
         TextButton(onClick = onNavigateToRegister) { Text(text = "¿No tienes cuenta? Registrate") }
     }

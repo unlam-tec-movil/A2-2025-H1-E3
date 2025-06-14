@@ -125,8 +125,10 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
             }
             composable("signIn") {
                 SignInScreen(
-                    navController = controller,
-                    snackbarHostState = snackbarHostState,
+                    onSignInSuccess = {
+                        controller.navigate("home")
+                    },
+                    onNavigateToLogin = { controller.navigate("login") },
                 )
             }
             composable(

@@ -4,64 +4,54 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
 
 @Composable
 fun ProfileUserForm(
     header: String,
-    user: User?,
-    isLoading: Boolean,
-    onSaveChanges: (name: String, email: String?, avatarUrl: String?, password: String?) -> Unit,
+    name: String,
+    email: String,
+    password: String,
+    confirmPassword: String,
+    avatarUrl: String = "",
+    isEditing: Boolean,
+    nameError: String? = null,
+    emailError: String? = null,
+    passwordError: String? = null,
+    confirmPasswordError: String? = null,
+    avatarUrlError: String? = null,
+    onNameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onAvatarUrlChange: (String) -> Unit,
 ) {
-    val isEditing = user != null
-
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") } // solo para registro
-    var avatarUrl by remember { mutableStateOf("") } // solo para edición
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
-    LaunchedEffect(key1 = user) {
-        if (isEditing && user != null) {
-            name = user.name
-            avatarUrl = user.avatarUrl
-            password = ""
-            confirmPassword = ""
-        } else {
-            name = ""
-            avatarUrl = ""
-            password = ""
-            confirmPassword = ""
-        }
-    }
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(header)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(header, style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(16.dp))
         CustomTextField(
             value = name,
-            onValueChange = { name = it },
+            onValueChange = { onNameChange(it) },
             label = "Nombre",
+            error = nameError,
             keyboardAction = ImeAction.Next,
         )
         Spacer(modifier = Modifier.height(8.dp))
         if (!isEditing) {
             CustomTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { onEmailChange(it) },
                 label = "Email",
+                error = emailError,
                 keyboardAction = ImeAction.Next,
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -70,49 +60,29 @@ fun ProfileUserForm(
         if (isEditing) {
             CustomTextField(
                 value = avatarUrl,
-                onValueChange = { avatarUrl = it },
+                onValueChange = { onAvatarUrlChange(it) },
                 label = "Avatar URL",
+                error = avatarUrlError,
                 keyboardAction = ImeAction.Next,
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
         CustomTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { onPasswordChange(it) },
             label = "Contraseña",
             isPassword = true,
+            error = passwordError,
             keyboardAction = ImeAction.Next,
         )
         Spacer(modifier = Modifier.height(8.dp))
         CustomTextField(
             value = confirmPassword,
-            onValueChange = { confirmPassword = it },
+            onValueChange = { onConfirmPasswordChange(it) },
             label = "Confirmar contraseña",
             isPassword = true,
+            error = confirmPasswordError,
             keyboardAction = ImeAction.Done,
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                onSaveChanges(
-                    name,
-                    if (isEditing) user.email else email,
-                    if (isEditing) user.avatarUrl else avatarUrl,
-                    password,
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading,
-        ) {
-            Text(
-                if (isLoading) {
-                    "Guardando..."
-                } else if (isEditing) {
-                    "Actualizar"
-                } else {
-                    "Crear Cuenta"
-                },
-            )
-        }
     }
 }

@@ -8,10 +8,8 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @Immutable
@@ -35,6 +33,7 @@ sealed interface CreatePostUIState {
 
 data class CreatePostState(
     val createPostUiState: CreatePostUIState,
+    val message: String = "",
 )
 
 @HiltViewModel
@@ -47,10 +46,11 @@ class CreatePostViewModel
         private val _uiState = MutableStateFlow(CreatePostState(CreatePostUIState.Idle))
         val uiState = _uiState.asStateFlow()
 
-        private fun getCurrentDate(): String =
-            SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(
-                Date(),
-            )
+        fun onMessageChange(newMessage: String) {
+            _uiState.update {
+                it.copy(message = newMessage)
+            }
+        }
 
         fun addPost(
             message: String,
@@ -62,6 +62,7 @@ class CreatePostViewModel
                 try {
                     when {
                         isDraft -> {
+                            // llamar aca al metodo para guardar el borrador
                             _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(message))
                         }
                         parentId != null -> {

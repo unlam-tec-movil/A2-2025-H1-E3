@@ -31,4 +31,35 @@ class AuthToken(
         }
 
     val appToken: String = ar.edu.unlam.mobile.scaffolding.BuildConfig.API_KEY
+
+    private val FAVORITE_USERS_KEY = "FavoriteUsers"
+
+    fun addFavoriteUser(user: User) {
+        val currentList = getFavoriteUsers().toMutableList()
+        if (currentList.none { it.id == user.id }) {
+            currentList.add(user)
+            saveFavoriteUsers(currentList)
+        }
+    }
+
+    fun removeFavoriteUser(userId: Int) {
+        val currentList = getFavoriteUsers().toMutableList()
+        currentList.removeIf { it.id == userId }
+        saveFavoriteUsers(currentList)
+    }
+
+    fun getFavoriteUsers(): List<User> {
+        val json = preferences.getString(FAVORITE_USERS_KEY, null)
+        return if (json != null) {
+            val type = object : TypeToken<List<User>>() {}.type
+            gson.fromJson(json, type)
+        } else {
+            emptyList()
+        }
+    }
+
+    private fun saveFavoriteUsers(users: List<User>) {
+        val json = gson.toJson(users)
+        preferences.edit { putString(FAVORITE_USERS_KEY, json) }
+    }
 }

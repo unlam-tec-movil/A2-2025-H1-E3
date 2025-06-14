@@ -23,4 +23,10 @@ interface IUserRepository {
     suspend fun saveCachedUser(user: User)
 
     suspend fun clearCachedUser()
+
+    suspend fun saveFavoriteUser(user: User)
+
+    suspend fun getFavoriteUsers(): List<User>
+
+    suspend fun removeFavoriteUser(userId: Int)
 }

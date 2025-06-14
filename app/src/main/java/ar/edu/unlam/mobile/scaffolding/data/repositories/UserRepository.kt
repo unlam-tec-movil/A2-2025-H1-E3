@@ -63,4 +63,16 @@ class UserRepository(
     override suspend fun clearCachedUser() {
         authToken.cachedUser = null
     }
+
+    override suspend fun saveFavoriteUser(user: User) {
+        authToken.addFavoriteUser(user)
+    }
+
+    override suspend fun getFavoriteUsers(): List<User> {
+        return authToken.getFavoriteUsers()
+    }
+
+    override suspend fun removeFavoriteUser(userId: Int) {
+        authToken.removeFavoriteUser(userId)
+    }
 }

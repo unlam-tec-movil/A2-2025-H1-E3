@@ -1,14 +1,16 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LoginUseCase
+import ar.edu.unlam.mobile.scaffolding.utils.ValidationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 data class LoginState(
@@ -16,9 +18,8 @@ data class LoginState(
     val password: String = "",
     val emailError: String? = null,
     val passwordError: String? = null,
-    val isLoginEnabled: Boolean = true,
     val isLoading: Boolean = false, // propiedad para el CircularProgress
-    val showErrors: Boolean = false,
+    val showFieldErrors: Boolean = false,
 )
 
 @HiltViewModel
@@ -27,9 +28,6 @@ class LoginViewModel
     constructor(
         private val loginUseCase: LoginUseCase,
     ) : ViewModel() {
-        // private val _isLoading = MutableStateFlow(false)
-        // val isLoading: StateFlow<Boolean> = _isLoading
-
         private val _uiState = MutableStateFlow(LoginState())
         val uiState: StateFlow<LoginState> = _uiState
 
@@ -49,18 +47,11 @@ class LoginViewModel
             _uiState.update { it.copy(isLoading = isLoading) }
         }
 
-        fun isEmailValid(email: String): Boolean =
-            Patterns.EMAIL_ADDRESS
-                .matcher(email)
-                .matches()
-
-        fun isPasswordValid(password: String): Boolean = password.length >= 3
-
         fun verifyLogin() {
-            if (!_uiState.value.showErrors) return // no mostrar los errores todavía
+            if (!_uiState.value.showFieldErrors) return // no mostrar los errores todavía
             // verificar si los campos son válidos
-            val emailValid = isEmailValid(_uiState.value.email)
-            val passwordValid = isPasswordValid(_uiState.value.password)
+            val emailValid = ValidationUtils.isEmailValid(_uiState.value.email)
+            val passwordValid = ValidationUtils.isPasswordValid(_uiState.value.password)
             _uiState.update {
                 it.copy(
                     emailError = if (!emailValid) "El formato del email es incorrecto" else null,
@@ -73,7 +64,7 @@ class LoginViewModel
             onSuccess: () -> Unit,
             onError: (String) -> Unit,
         ) {
-            _uiState.update { it.copy(showErrors = true) } // activar errores
+            _uiState.update { it.copy(showFieldErrors = true) } // activar errores
             verifyLogin()
 
             val hasErrors = _uiState.value.emailError != null || _uiState.value.passwordError != null
@@ -85,7 +76,13 @@ class LoginViewModel
                     loginUseCase(_uiState.value.email, _uiState.value.password)
                     onSuccess()
                 } catch (e: Exception) {
-                    onError(e.message ?: "Error desconocido")
+                    val errorMsg =
+                        when (e) {
+                            is HttpException -> "Servidor no disponible"
+                            is IOException -> "Error de red"
+                            else -> "Usuario o contraseña incorrectos"
+                        }
+                    onError(errorMsg)
                 } finally {
                     setLoading(false)
                 }

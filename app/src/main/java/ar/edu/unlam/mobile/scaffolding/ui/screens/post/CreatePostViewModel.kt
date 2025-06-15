@@ -63,19 +63,35 @@ class CreatePostViewModel
                     when {
                         isDraft -> {
                             // llamar aca al metodo para guardar el borrador
-                            _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(message))
+                            _uiState.value =
+                                CreatePostState(
+                                    createPostUiState = CreatePostUIState.SuccessDraft(message),
+                                    message = message,
+                                )
                         }
                         parentId != null -> {
                             createReplyUseCase(parentId, message)
-                            _uiState.value = CreatePostState(CreatePostUIState.Success(message))
+                            _uiState.value =
+                                CreatePostState(
+                                    createPostUiState = CreatePostUIState.Success(message),
+                                    message = message,
+                                )
                         }
                         else -> {
                             createPostUseCase(message)
-                            _uiState.value = CreatePostState(CreatePostUIState.Success(message))
+                            _uiState.value =
+                                CreatePostState(
+                                    createPostUiState = CreatePostUIState.Success(message),
+                                    message = message,
+                                )
                         }
                     }
                 } catch (exception: Exception) {
-                    _uiState.value = CreatePostState(CreatePostUIState.Error("No se pudo crear el post ${exception.message}"))
+                    _uiState.value =
+                        CreatePostState(
+                            createPostUiState = CreatePostUIState.Error("No se pudo crear el post ${exception.message}"),
+                            message = message,
+                        )
                 }
             }
         }

@@ -31,7 +31,7 @@ fun PostCard(
 
     val likeCountText = remember(post.likes) { post.likes.toString() }
 
-    Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
         // Avatar
         Avatar(post.avatarUrl)
 
@@ -43,7 +43,6 @@ fun PostCard(
             Spacer(modifier = Modifier.height(4.dp))
             // Message
             PostMessage(post)
-            Spacer(modifier = Modifier.height(8.dp))
             // Actions
             PostActions(
                 post = post,

@@ -15,7 +15,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 
 @Composable
 fun QuoteCard(post: Post) {
-    Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
         // Avatar
         Avatar(post.avatarUrl)
 

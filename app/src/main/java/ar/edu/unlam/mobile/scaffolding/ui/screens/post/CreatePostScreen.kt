@@ -172,7 +172,7 @@ fun PostTextFieldSection(
 ) {
     Row(modifier = Modifier.padding(top = 16.dp)) {
         Avatar(
-            modifier = Modifier.padding(end = 12.dp),
+            modifier = Modifier.padding(end = 8.dp),
             avatarUrl = avatarUrl,
             avatarSize = 38.dp,
         )

@@ -69,8 +69,8 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
     val currentRoute = navBackStackEntry.value?.destination?.route
 
     // agregamos las rutas donde queremos que no se vea la bottom bar o el fab
-    val hideFabRoutes = listOf("addPost", "login", "signIn", "quotes")
-    val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes")
+    val hideFabRoutes = listOf("addPost", "login", "signIn", "quotes", "user")
+    val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes", "user")
 
     val shouldHideFab = hideFabRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
     val shouldHideBottomBar =

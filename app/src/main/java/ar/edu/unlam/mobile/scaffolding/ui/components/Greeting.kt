@@ -10,7 +10,7 @@ fun Greeting(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = "Hello $name!",
+        text = name,
         modifier = modifier,
     )
 }

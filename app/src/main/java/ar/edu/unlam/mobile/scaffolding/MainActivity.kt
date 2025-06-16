@@ -29,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
+import ar.edu.unlam.mobile.scaffolding.ui.screens.AboutScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.QuotesScreen
@@ -69,8 +70,8 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
     val currentRoute = navBackStackEntry.value?.destination?.route
 
     // agregamos las rutas donde queremos que no se vea la bottom bar o el fab
-    val hideFabRoutes = listOf("addPost", "login", "signIn", "quotes", "user")
-    val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes", "user")
+    val hideFabRoutes = listOf("addPost", "login", "signIn", "quotes", "user", "about")
+    val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes", "user", "about")
 
     val shouldHideFab = hideFabRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
     val shouldHideBottomBar =
@@ -164,6 +165,9 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
                     ),
             ) { backStackEntry ->
                 CreatePostScreen(navController = controller, backStackEntry = backStackEntry)
+            }
+            composable("about") {
+                AboutScreen(navController = controller)
             }
         }
     }

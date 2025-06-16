@@ -1,10 +1,10 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Drafts
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -32,7 +32,7 @@ fun BottomBar(controller: NavHostController) {
         )
 
         NavigationBarItem(
-            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "about" } == true,
+            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "draft" } == true,
             onClick = { },
             icon = {
                 Icon(
@@ -44,7 +44,7 @@ fun BottomBar(controller: NavHostController) {
         )
 
         NavigationBarItem(
-            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "about" } == true,
+            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "favorites" } == true,
             onClick = { },
             icon = {
                 Icon(
@@ -55,28 +55,28 @@ fun BottomBar(controller: NavHostController) {
             },
         )
 
-        NavigationBarItem(
-            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "user" } == true,
-            onClick = { controller.navigate("user") },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.AccountBox,
-                    contentDescription = "User",
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            },
-        )
-
 //        NavigationBarItem(
-//            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "about" } == true,
-//            onClick = { controller.navigate("about") },
+//            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "user" } == true,
+//            onClick = { controller.navigate("user") },
 //            icon = {
 //                Icon(
-//                    imageVector = Icons.Default.Info,
-//                    contentDescription = "Acerca de",
+//                    imageVector = Icons.Default.AccountBox,
+//                    contentDescription = "User",
 //                    tint = MaterialTheme.colorScheme.primary,
 //                )
 //            },
 //        )
+
+        NavigationBarItem(
+            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "about" } == true,
+            onClick = { controller.navigate("about") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Acerca de",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            },
+        )
     }
 }

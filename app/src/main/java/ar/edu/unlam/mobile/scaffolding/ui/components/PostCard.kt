@@ -20,6 +20,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 @Composable
 fun PostCard(
     post: Post,
+    repliesCount: Int,
     onLikeClick: () -> Unit,
     onReplyClick: () -> Unit,
 ) {
@@ -30,7 +31,7 @@ fun PostCard(
 
     val likeCountText = remember(post.likes) { post.likes.toString() }
 
-    Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
         // Avatar
         Avatar(post.avatarUrl)
 
@@ -42,10 +43,10 @@ fun PostCard(
             Spacer(modifier = Modifier.height(4.dp))
             // Message
             PostMessage(post)
-            Spacer(modifier = Modifier.height(8.dp))
             // Actions
             PostActions(
                 post = post,
+                repliesCount = repliesCount,
                 onReplyClick = onReplyClick,
                 onLikeClick = onLikeClick,
             )

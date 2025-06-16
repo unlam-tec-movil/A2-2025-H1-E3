@@ -10,5 +10,24 @@ interface IUserRepository {
         password: String,
     ): String
 
-    fun getUser(userId: Int): Flow<List<User>>
+    suspend fun login(
+        email: String,
+        password: String,
+    ): String
+
+    suspend fun isUserLogged(): Boolean
+
+    suspend fun getUserProfile(): User
+
+    suspend fun getCachedUser(): User?
+
+    suspend fun saveCachedUser(user: User)
+
+    suspend fun clearCachedUser()
+
+    suspend fun insertFavoriteUser(user: User)
+
+    suspend fun deleteFavoriteUser(user: User)
+
+    fun getAllFavoriteUser(): Flow<List<User>>
 }

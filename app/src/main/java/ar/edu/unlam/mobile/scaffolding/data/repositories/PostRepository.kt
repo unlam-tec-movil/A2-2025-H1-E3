@@ -2,7 +2,8 @@ package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
 import ar.edu.unlam.mobile.scaffolding.data.mappers.toDomain
-import ar.edu.unlam.mobile.scaffolding.data.mappers.toDto
+import ar.edu.unlam.mobile.scaffolding.data.models.CreatePostRequestDto
+import ar.edu.unlam.mobile.scaffolding.data.models.ReplyRequestDto
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.post.repository.IPostRepository
 import coil.network.HttpException
@@ -57,10 +58,28 @@ class PostRepository(
             emit(response.map { it.toDomain() })
         }.flowOn(Dispatchers.IO)
 
-    override suspend fun createPost(post: Post) {
+    override suspend fun createPost(message: String) {
         try {
-            val dto = post.toDto()
+            val dto = CreatePostRequestDto(message)
             val response = apiService.createPost(dto)
+
+            if (!response.isSuccessful) {
+                throw Exception(response.code().toString())
+            }
+        } catch (e: HttpException) {
+            throw e
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun createReply(
+        postId: Int,
+        message: String,
+    ) {
+        try {
+            val dto = ReplyRequestDto(message)
+            val response = apiService.createReply(postId, dto)
 
             if (!response.isSuccessful) {
                 throw Exception(response.code().toString())

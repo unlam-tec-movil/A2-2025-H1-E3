@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.utils.decodeBase64ToBitmap
@@ -21,6 +22,7 @@ fun Avatar(
     avatarUrl: String?,
     modifier: Modifier = Modifier,
     defaultImageRes: Int = R.drawable.ic_launcher_foreground,
+    avatarSize: Dp = 48.dp, // Valor por defecto
 ) {
     val model =
         remember(avatarUrl) {
@@ -37,7 +39,7 @@ fun Avatar(
             contentDescription = "avatar",
             modifier =
                 modifier
-                    .size(48.dp)
+                    .size(avatarSize)
                     .border(1.5.dp, MaterialTheme.colorScheme.surfaceBright, CircleShape)
                     .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
                     .clip(CircleShape),
@@ -49,7 +51,7 @@ fun Avatar(
             contentDescription = "default avatar",
             modifier =
                 modifier
-                    .size(48.dp)
+                    .size(avatarSize)
                     .border(1.5.dp, MaterialTheme.colorScheme.surfaceBright, CircleShape)
                     .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
                     .clip(CircleShape),

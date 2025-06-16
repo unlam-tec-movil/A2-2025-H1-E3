@@ -1,21 +1,15 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,11 +21,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.Feed
+import ar.edu.unlam.mobile.scaffolding.ui.components.LogoutConfirmationDialog
+import ar.edu.unlam.mobile.scaffolding.ui.components.PostOptionsBottomSheet
+import ar.edu.unlam.mobile.scaffolding.ui.components.UserHeader
+import ar.edu.unlam.mobile.scaffolding.ui.components.rememberHeaderVisibility
+import ar.edu.unlam.mobile.scaffolding.utils.encode
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,15 +37,16 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    userSessionViewModel: UserSessionViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
     navController: NavController,
 ) {
     val uiState: PostUIState by viewModel.uiState.collectAsState()
+    val user by userSessionViewModel.user.collectAsState()
 
     // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
     val shouldRefreshFlow =
-        navController
-            .currentBackStackEntry
+        navController.currentBackStackEntry
             ?.savedStateHandle
             ?.getStateFlow("shouldRefresh", false)
 
@@ -74,38 +73,44 @@ fun HomeScreen(
     // Este es el post seleccionado para usar en el BottomSheet
     var selectedPost by remember { mutableStateOf<Post?>(null) }
 
+    // BottomShett
     if (isSheetOpen && selectedPost != null) {
-        ModalBottomSheet(
-            onDismissRequest = { isSheetOpen = false },
+        PostOptionsBottomSheet(
+            post = selectedPost!!,
+            onDismiss = { isSheetOpen = false },
+            onReply = { post ->
+                val id = post.id
+                val author = post.author.encode()
+                val message = post.message.encode()
+                navController.navigate("addPost/$id/$author/$message")
+            },
+            onViewReplies = { post ->
+                navController.navigate("quotes/${post.id}")
+            },
             sheetState = sheetState,
-        ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-            ) {
-                Text(
-                    text = "Opciones para el post de ${selectedPost!!.author}",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                TextButton(onClick = {
-                    isSheetOpen = false
-                    // Acción: Ver cita
-                    navController.navigate("addPost?quotedPostId=${selectedPost!!.id}")
-                }) {
-                    Text("Responder")
+        )
+    }
+
+    // State y lógica para el scroll y visibilidad del header de la LazyColumn
+    val listState = rememberLazyListState()
+    val showHeader by rememberHeaderVisibility(listState)
+
+    // Estado para mostrar diálogo de confirmación logout
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    // Diálogo de confirmación de Logout
+    if (showLogoutDialog) {
+        LogoutConfirmationDialog(
+            onConfirm = {
+                userSessionViewModel.logout {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
                 }
-                TextButton(onClick = {
-                    isSheetOpen = false
-                    // Acción alternativa
-                    navController.navigate("quotes/${selectedPost!!.id}")
-                }) {
-                    Text("Ver respuestas del post")
-                }
-            }
-        }
+            },
+            onDismiss = { showLogoutDialog = false },
+            showDialog = showLogoutDialog,
+        )
     }
 
     Scaffold(
@@ -127,12 +132,23 @@ fun HomeScreen(
             is FeedUIState.Success -> {
                 Feed(
                     posts = postState.posts,
+                    repliesMap = postState.repliesMap,
                     modifier = modifier.padding(paddingValues),
                     onOptionsClick = { post ->
                         selectedPost = post
                         isSheetOpen = true
                         coroutineScope.launch {
                             sheetState.show()
+                        }
+                    },
+                    listState = listState,
+                    header = {
+                        AnimatedVisibility(visible = showHeader) {
+                            UserHeader(
+                                user = user,
+                                onProfileClick = { navController.navigate("user") },
+                                onLogoutClick = { showLogoutDialog = true },
+                            )
                         }
                     },
                 )

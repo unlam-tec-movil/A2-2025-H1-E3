@@ -3,15 +3,13 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @Immutable
@@ -19,11 +17,11 @@ sealed interface CreatePostUIState {
     data object Idle : CreatePostUIState
 
     data class Success(
-        val post: Post,
+        val message: String,
     ) : CreatePostUIState
 
     data class SuccessDraft(
-        val post: Post,
+        val message: String,
     ) : CreatePostUIState
 
     data object Loading : CreatePostUIState
@@ -35,6 +33,7 @@ sealed interface CreatePostUIState {
 
 data class CreatePostState(
     val createPostUiState: CreatePostUIState,
+    val message: String = "",
 )
 
 @HiltViewModel
@@ -42,43 +41,57 @@ class CreatePostViewModel
     @Inject
     constructor(
         private val createPostUseCase: CreatePostUseCase,
+        private val createReplyUseCase: CreateReplyUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(CreatePostState(CreatePostUIState.Idle))
         val uiState = _uiState.asStateFlow()
 
-        private fun getCurrentDate(): String =
-            SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(
-                Date(),
-            )
+        fun onMessageChange(newMessage: String) {
+            _uiState.update {
+                it.copy(message = newMessage)
+            }
+        }
 
         fun addPost(
             message: String,
-            author: String,
-            avatarUrl: String,
             isDraft: Boolean,
+            parentId: Int? = null,
         ) {
             _uiState.value = CreatePostState(CreatePostUIState.Loading)
             viewModelScope.launch {
                 try {
-                    val newPost =
-                        Post(
-                            id = (0..999).random(),
-                            author = author,
-                            date = getCurrentDate(),
-                            liked = false,
-                            likes = 0,
-                            message = message,
-                            parentId = 0,
-                            avatarUrl = avatarUrl,
-                        )
-                    if (!isDraft) {
-                        createPostUseCase(newPost)
-                        _uiState.value = CreatePostState(CreatePostUIState.Success(newPost))
-                    } else {
-                        _uiState.value = CreatePostState(CreatePostUIState.SuccessDraft(newPost))
+                    when {
+                        isDraft -> {
+                            // llamar aca al metodo para guardar el borrador
+                            _uiState.value =
+                                CreatePostState(
+                                    createPostUiState = CreatePostUIState.SuccessDraft(message),
+                                    message = message,
+                                )
+                        }
+                        parentId != null -> {
+                            createReplyUseCase(parentId, message)
+                            _uiState.value =
+                                CreatePostState(
+                                    createPostUiState = CreatePostUIState.Success(message),
+                                    message = message,
+                                )
+                        }
+                        else -> {
+                            createPostUseCase(message)
+                            _uiState.value =
+                                CreatePostState(
+                                    createPostUiState = CreatePostUIState.Success(message),
+                                    message = message,
+                                )
+                        }
                     }
                 } catch (exception: Exception) {
-                    _uiState.value = CreatePostState(CreatePostUIState.Error("No se pudo crear el post ${exception.message}"))
+                    _uiState.value =
+                        CreatePostState(
+                            createPostUiState = CreatePostUIState.Error("No se pudo crear el post ${exception.message}"),
+                            message = message,
+                        )
                 }
             }
         }

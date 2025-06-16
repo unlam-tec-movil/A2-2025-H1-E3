@@ -14,7 +14,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,7 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavUsersScreen(text: String, viewModel: FavoriteUsersViewModel = hiltViewModel()) {
+fun FavUsersScreen(viewModel: FavoriteUsersViewModel = hiltViewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -67,5 +66,5 @@ fun FavUsersScreen(text: String, viewModel: FavoriteUsersViewModel = hiltViewMod
 @Preview(showSystemUi = true)
 @Composable
 fun UserScreenPreview() {
-    FavUsersScreen("TITULO PRUEBA")
+    FavUsersScreen()
 }

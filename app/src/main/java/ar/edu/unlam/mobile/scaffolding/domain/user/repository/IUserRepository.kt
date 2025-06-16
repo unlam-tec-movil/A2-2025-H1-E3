@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.domain.user.repository
 
 import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
+import kotlinx.coroutines.flow.Flow
 
 interface IUserRepository {
     suspend fun register(
@@ -23,4 +24,10 @@ interface IUserRepository {
     suspend fun saveCachedUser(user: User)
 
     suspend fun clearCachedUser()
+
+    suspend fun insertFavoriteUser(user: User)
+
+    suspend fun deleteFavoriteUser(user: User)
+
+    fun getAllFavoriteUser(): Flow<List<User>>
 }

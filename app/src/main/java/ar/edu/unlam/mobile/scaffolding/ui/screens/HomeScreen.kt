@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -43,6 +42,7 @@ fun HomeScreen(
 ) {
     val uiState: PostUIState by viewModel.uiState.collectAsState()
     val user by userSessionViewModel.user.collectAsState()
+    val favoriteUsers by viewModel.favoriteUsers.collectAsState()
 
     // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
     val shouldRefreshFlow =
@@ -115,7 +115,6 @@ fun HomeScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         when (val postState = uiState.feedUiState) {
             // loading component
@@ -151,6 +150,8 @@ fun HomeScreen(
                             )
                         }
                     },
+                    favoriteUsernames = favoriteUsers.map { it.name }.toSet(),
+                    onFollowClick = { post -> viewModel.toggleFavorite(post) },
                 )
             }
 

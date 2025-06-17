@@ -47,7 +47,11 @@ class QuotesViewModel
                     }.catch { throwable ->
                         _uiState.value =
                             QuotesState(
-                                QuotesUIState.Error("Error cargando las citas: ${throwable.message}"),
+                                // QuotesUIState.Error("Error cargando las citas: ${throwable.message}"),
+                                QuotesUIState.Error(
+                                    "Error cargando las respuestas: " +
+                                        "Verifique la conexión a internet e intente nuevamente",
+                                ),
                             )
                     }.collect { posts ->
                         _uiState.value = QuotesState(QuotesUIState.Success(posts))

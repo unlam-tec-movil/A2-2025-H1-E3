@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -110,22 +109,22 @@ class HomeViewModel
         }
 
         fun toggleFavorite(post: Post) {
-            // Crear el User a insertar/eliminar
-            val user =
-                User(
-                    avatarUrl = post.avatarUrl,
-                    name = post.author,
-                    email = "",
-                )
-
             viewModelScope.launch {
-                val isAlreadyFavorite = favoriteUsers.value.any { it.name == post.author }
+                val favoriteUser = favoriteUsers.value.find { it.name == post.author }
 
-                if (isAlreadyFavorite) {
-                    Log.d("HomeViewModel", "Eliminando usuario de favoritos: ${user.name}")
-                    deleteFavoriteUserUseCase(user)
+                if (favoriteUser != null) {
+                    // Log.d("HomeViewModel", "Eliminando usuario de favoritos: ${favoriteUser.name}")
+                    deleteFavoriteUserUseCase(favoriteUser)
                 } else {
-                    Log.d("HomeViewModel", "Agregando usuario a favoritos: ${user.name}")
+                    // Crear el nuevo User solo si no estaba
+                    val user =
+                        User(
+                            id = 0,
+                            avatarUrl = post.avatarUrl,
+                            name = post.author,
+                            email = "",
+                        )
+                    // Log.d("HomeViewModel", "Agregando usuario a favoritos: ${user.name}")
                     insertFavoriteUserUseCase(user)
                 }
             }

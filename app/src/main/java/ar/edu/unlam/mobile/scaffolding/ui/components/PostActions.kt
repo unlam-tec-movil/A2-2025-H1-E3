@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -11,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,6 +29,8 @@ fun PostActions(
     repliesCount: Int,
     onLikeClick: () -> Unit,
     onReplyClick: () -> Unit,
+    isFollowing: Boolean,
+    onFollowClick: () -> Unit,
 ) {
     val heartColor by animateColorAsState(
         targetValue = if (post.liked) Color.Red else Color.Gray,
@@ -62,6 +66,17 @@ fun PostActions(
                 text = likeCountText,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f)) // Esto empuja el botón hasta el final
+
+        // Follow Button
+        TextButton(onClick = onFollowClick) {
+            Text(
+                text = if (isFollowing) "Siguiendo" else "Seguir",
+                style = MaterialTheme.typography.labelSmall,
+                color = if (isFollowing) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

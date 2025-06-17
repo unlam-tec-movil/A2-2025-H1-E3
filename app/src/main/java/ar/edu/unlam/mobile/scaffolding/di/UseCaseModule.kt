@@ -8,8 +8,11 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetPostsUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetQuotesUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.ClearCachedUserUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.DeleteFavoriteUserUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetCachedUserUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetFavoriteUsersUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.InsertFavoriteUserUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.IsUserLoggedInUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LoginUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LogoutUseCase
@@ -65,4 +68,13 @@ object UseCaseModule {
         repo: IUserRepository,
         authToken: AuthToken,
     ): SignInUseCase = SignInUseCase(repo, authToken)
+
+    @Provides
+    fun provideGetFavoriteUsersUseCase(repo: IUserRepository): GetFavoriteUsersUseCase = GetFavoriteUsersUseCase(repo)
+
+    @Provides
+    fun provideInsertFavoriteUserUseCase(repo: IUserRepository): InsertFavoriteUserUseCase = InsertFavoriteUserUseCase(repo)
+
+    @Provides
+    fun provideDeleteFavoriteUserUseCase(repo: IUserRepository): DeleteFavoriteUserUseCase = DeleteFavoriteUserUseCase(repo)
 }

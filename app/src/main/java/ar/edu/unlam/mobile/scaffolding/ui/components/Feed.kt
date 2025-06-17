@@ -22,6 +22,8 @@ fun Feed(
     onOptionsClick: (Post) -> Unit,
     listState: LazyListState,
     header: @Composable () -> Unit,
+    favoriteUsernames: Set<String>,
+    onFollowClick: (Post) -> Unit,
 ) {
     LazyColumn(
         state = listState,
@@ -40,11 +42,14 @@ fun Feed(
         }
         items(posts) { post ->
             val repliesCount = repliesMap[post.id] ?: 0
+            val isFollowing = favoriteUsernames.contains(post.author)
             PostCard(
                 post,
                 repliesCount,
                 onLikeClick = {},
                 onReplyClick = { onOptionsClick(post) },
+                isFollowing = isFollowing,
+                onFollowClick = { onFollowClick(post) },
             )
         }
     }

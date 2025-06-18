@@ -10,6 +10,7 @@ import ar.edu.unlam.mobile.scaffolding.data.models.ReplyRequestDto
 import ar.edu.unlam.mobile.scaffolding.data.models.UserProfileResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -46,4 +47,14 @@ interface ApiService {
 
     @GET("api/v1/me/profile")
     suspend fun getUserProfile(): UserProfileResponseDto
+
+    @POST("api/v1/me/tuits/{tuit_id}/likes")
+    suspend fun addLike(
+        @Path("tuit_id") postId: String,
+    )
+
+    @DELETE("api/v1/me/tuits/{tuit_id}/likes")
+    suspend fun removeLike(
+        @Path("tuit_id") postId: String,
+    )
 }

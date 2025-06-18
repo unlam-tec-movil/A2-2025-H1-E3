@@ -36,7 +36,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,9 +63,9 @@ fun CreatePostScreen(
 
     // Poner el foco en el input
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
+        viewModel.resetState()
         focusRequester.requestFocus()
     }
 
@@ -80,7 +79,7 @@ fun CreatePostScreen(
         }
         is CreatePostUIState.SuccessDraft -> {
             Toast.makeText(context, "Se ha guardado el borrador", Toast.LENGTH_SHORT).show()
-            LaunchedEffect(Unit) {
+            LaunchedEffect(createPostState) {
                 navController.popBackStack()
             }
         }
@@ -92,7 +91,7 @@ fun CreatePostScreen(
             CreatePostTopBar(
                 onBackClick = { navController.popBackStack() },
                 onPostClick = {
-                    viewModel.addPost(uiState.message, isDraft = false, parentId = id)
+                    viewModel.addPost(isDraft = false, parentId = id)
                 },
                 enabled = uiState.message.isNotBlank() && uiState.message.length <= 280,
             )
@@ -123,7 +122,7 @@ fun CreatePostScreen(
                 PostDraftButton(
                     enabled = uiState.message.isNotBlank() && uiState.message.length <= 280,
                     onClick = {
-                        viewModel.addPost(uiState.message, isDraft = true)
+                        viewModel.addPost(isDraft = true)
                     },
                 )
             }

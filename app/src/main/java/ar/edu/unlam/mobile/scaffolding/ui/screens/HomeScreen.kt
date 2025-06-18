@@ -131,7 +131,6 @@ fun HomeScreen(
             is FeedUIState.Success -> {
                 Feed(
                     posts = postState.posts,
-                    repliesMap = postState.repliesMap,
                     modifier = modifier.padding(paddingValues),
                     onOptionsClick = { post ->
                         selectedPost = post

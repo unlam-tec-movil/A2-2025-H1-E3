@@ -25,7 +25,6 @@ import javax.inject.Inject
 sealed interface FeedUIState {
     data class Success(
         val posts: List<Post>,
-        val repliesMap: Map<Int, Int>,
     ) : FeedUIState
 
     data object Loading : FeedUIState
@@ -73,29 +72,16 @@ class HomeViewModel
             viewModelScope.launch {
                 getPostsUseCase()
                     .onStart {
+                        _uiState.value = PostUIState(FeedUIState.Loading)
+                    }.catch {
                         _uiState.value =
-                            _uiState.value.copy(
-                                feedUiState = FeedUIState.Loading,
-                            )
-                    }.catch { throwable ->
-                        _uiState.value =
-                            _uiState.value.copy(
-                                // feedUiState = FeedUIState.Error("Error cargando el feed: ${throwable.message}"),
-                                feedUiState =
-                                    FeedUIState.Error(
-                                        "Error cargando el feed: Verifique la conexión a internet e intente nuevamente",
-                                    ),
+                            PostUIState(
+                                FeedUIState.Error(
+                                    "Error cargando el feed: Verifique la conexión a internet e intente nuevamente",
+                                ),
                             )
                     }.collect { posts ->
-                        // extra: creamos un map (Postid, CantidadReplyes) para mostrar en el feed
-                        val repliesMap: Map<Int, Int> =
-                            posts
-                                .groupingBy { it.parentId }
-                                .eachCount()
-                        _uiState.value =
-                            _uiState.value.copy(
-                                feedUiState = FeedUIState.Success(posts = posts, repliesMap = repliesMap),
-                            )
+                        _uiState.value = PostUIState(FeedUIState.Success(posts))
                     }
             }
         }
@@ -113,18 +99,16 @@ class HomeViewModel
                 val favoriteUser = favoriteUsers.value.find { it.name == post.author }
 
                 if (favoriteUser != null) {
-                    // Log.d("HomeViewModel", "Eliminando usuario de favoritos: ${favoriteUser.name}")
                     deleteFavoriteUserUseCase(favoriteUser)
                 } else {
                     // Crear el nuevo User solo si no estaba
                     val user =
                         User(
-                            id = 0,
+                            id = 0, // en la base es autoincremental
                             avatarUrl = post.avatarUrl,
                             name = post.author,
                             email = "",
                         )
-                    // Log.d("HomeViewModel", "Agregando usuario a favoritos: ${user.name}")
                     insertFavoriteUserUseCase(user)
                 }
             }

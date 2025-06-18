@@ -17,7 +17,6 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 @Composable
 fun Feed(
     posts: List<Post>,
-    repliesMap: Map<Int, Int>,
     modifier: Modifier,
     onOptionsClick: (Post) -> Unit,
     listState: LazyListState,
@@ -25,6 +24,7 @@ fun Feed(
     favoriteUsernames: Set<String>,
     onFollowClick: (Post) -> Unit,
 ) {
+    val repliesMap: Map<Int, Int> = posts.groupingBy { it.parentId }.eachCount()
     LazyColumn(
         state = listState,
         modifier =

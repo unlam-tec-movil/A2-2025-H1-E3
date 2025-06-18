@@ -90,4 +90,20 @@ class PostRepository(
             throw e
         }
     }
+
+    override suspend fun addLike(postId: String) {
+        try {
+            apiService.addLike(postId)
+        } catch (e: HttpException) {
+            throw e
+        }
+    }
+
+    override suspend fun removeLike(postId: String) {
+        try {
+            apiService.removeLike(postId)
+        } catch (e: HttpException) {
+            throw e
+        }
+    }
 }

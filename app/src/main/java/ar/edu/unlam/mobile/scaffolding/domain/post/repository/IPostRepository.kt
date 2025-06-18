@@ -14,4 +14,8 @@ interface IPostRepository {
         postId: Int,
         message: String,
     )
+
+    suspend fun addLike(postId: String)
+
+    suspend fun removeLike(postId: String)
 }

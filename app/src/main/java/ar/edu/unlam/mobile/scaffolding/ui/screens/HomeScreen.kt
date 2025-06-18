@@ -151,6 +151,7 @@ fun HomeScreen(
                     },
                     favoriteUsernames = favoriteUsers.map { it.name }.toSet(),
                     onFollowClick = { post -> viewModel.toggleFavorite(post) },
+                    onLikeClick = { post -> viewModel.toggleLike(post) },
                 )
             }
 

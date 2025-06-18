@@ -23,6 +23,7 @@ fun Feed(
     header: @Composable () -> Unit,
     favoriteUsernames: Set<String>,
     onFollowClick: (Post) -> Unit,
+    onLikeClick: (Post) -> Unit,
 ) {
     val repliesMap: Map<Int, Int> = posts.groupingBy { it.parentId }.eachCount()
     LazyColumn(
@@ -46,7 +47,7 @@ fun Feed(
             PostCard(
                 post,
                 repliesCount,
-                onLikeClick = {},
+                onLikeClick = { onLikeClick(post) },
                 onReplyClick = { onOptionsClick(post) },
                 isFollowing = isFollowing,
                 onFollowClick = { onFollowClick(post) },

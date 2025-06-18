@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,18 +17,23 @@ import ar.edu.unlam.mobile.scaffolding.utils.formatFriendlyDate
 
 @Composable
 fun PostHeader(post: Post) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Bottom,
+    ) {
         Text(
             text = post.author,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.alignByBaseline(),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = formatFriendlyDate(post.date),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
             fontSize = 12.sp,
+            modifier = Modifier.alignByBaseline(),
         )
     }
 }

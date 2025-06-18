@@ -11,6 +11,7 @@ fun PostMessage(post: Post) {
     Text(
         text = post.message,
         fontSize = 14.sp,
+        lineHeight = 22.sp,
         color = MaterialTheme.colorScheme.onBackground,
     )
 }

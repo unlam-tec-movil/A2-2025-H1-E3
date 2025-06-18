@@ -53,46 +53,52 @@ class CreatePostViewModel
         }
 
         fun addPost(
-            message: String,
             isDraft: Boolean,
             parentId: Int? = null,
         ) {
-            _uiState.value = CreatePostState(CreatePostUIState.Loading)
+            _uiState.update { it.copy(createPostUiState = CreatePostUIState.Loading) }
             viewModelScope.launch {
+                val currentMessage = _uiState.value.message
                 try {
                     when {
                         isDraft -> {
                             // llamar aca al metodo para guardar el borrador
-                            _uiState.value =
-                                CreatePostState(
-                                    createPostUiState = CreatePostUIState.SuccessDraft(message),
-                                    message = message,
+                            _uiState.update {
+                                it.copy(
+                                    createPostUiState = CreatePostUIState.SuccessDraft(currentMessage),
                                 )
+                            }
                         }
                         parentId != null -> {
-                            createReplyUseCase(parentId, message)
-                            _uiState.value =
-                                CreatePostState(
-                                    createPostUiState = CreatePostUIState.Success(message),
-                                    message = message,
+                            createReplyUseCase(parentId, currentMessage)
+                            _uiState.update {
+                                it.copy(
+                                    createPostUiState = CreatePostUIState.Success(currentMessage),
                                 )
+                            }
                         }
                         else -> {
-                            createPostUseCase(message)
-                            _uiState.value =
-                                CreatePostState(
-                                    createPostUiState = CreatePostUIState.Success(message),
-                                    message = message,
+                            createPostUseCase(currentMessage)
+                            _uiState.update {
+                                it.copy(
+                                    createPostUiState = CreatePostUIState.Success(currentMessage),
                                 )
+                            }
                         }
                     }
                 } catch (exception: Exception) {
-                    _uiState.value =
-                        CreatePostState(
+                    _uiState.update {
+                        it.copy(
                             createPostUiState = CreatePostUIState.Error("No se pudo crear el post ${exception.message}"),
-                            message = message,
                         )
+                    }
                 }
+            }
+        }
+
+        fun resetState() {
+            _uiState.update {
+                it.copy(createPostUiState = CreatePostUIState.Idle)
             }
         }
     }

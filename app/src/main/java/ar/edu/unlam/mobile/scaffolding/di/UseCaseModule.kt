@@ -6,6 +6,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetPostsUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetQuotesUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.ToggleLikeUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.ClearCachedUserUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.DeleteFavoriteUserUseCase
@@ -77,4 +78,7 @@ object UseCaseModule {
 
     @Provides
     fun provideDeleteFavoriteUserUseCase(repo: IUserRepository): DeleteFavoriteUserUseCase = DeleteFavoriteUserUseCase(repo)
+
+    @Provides
+    fun provideToggleLikeUseCase(repo: IPostRepository): ToggleLikeUseCase = ToggleLikeUseCase(repo)
 }

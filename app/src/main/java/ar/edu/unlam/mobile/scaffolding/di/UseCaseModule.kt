@@ -19,6 +19,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LoginUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LogoutUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.SaveCachedUserUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.SignInUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.UpdateUserProfileUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,4 +82,7 @@ object UseCaseModule {
 
     @Provides
     fun provideToggleLikeUseCase(repo: IPostRepository): ToggleLikeUseCase = ToggleLikeUseCase(repo)
+
+    @Provides
+    fun provideUpdateUserProfileUseCase(repo: IUserRepository): UpdateUserProfileUseCase = UpdateUserProfileUseCase(repo)
 }

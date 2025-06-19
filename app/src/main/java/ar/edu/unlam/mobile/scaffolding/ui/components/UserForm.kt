@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 fun ProfileUserForm(
     header: String,
     name: String,
-    email: String,
+    email: String = "",
     password: String,
     confirmPassword: String,
     avatarUrl: String = "",

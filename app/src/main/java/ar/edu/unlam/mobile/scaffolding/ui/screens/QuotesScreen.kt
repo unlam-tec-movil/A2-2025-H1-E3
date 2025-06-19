@@ -26,6 +26,11 @@ fun QuotesScreen(
 ) {
     val uiState: QuotesState by viewModel.uiState.collectAsState()
 
+    // Buscamos el post original
+    val homeViewModel: HomeViewModel = hiltViewModel()
+    val homeUiState by homeViewModel.uiState.collectAsState()
+    val originalPost = (homeUiState.feedUiState as? FeedUIState.Success) ?.posts?.find { it.id == postId }
+
     LaunchedEffect(postId) {
         viewModel.loadQuotes(postId)
     }
@@ -49,7 +54,10 @@ fun QuotesScreen(
                 Quotes(
                     posts = quotesState.posts,
                     modifier = modifier.padding(paddingValues),
-                    onBackClick = { navController.popBackStack() },
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    quotedPost = originalPost ?: return@Scaffold,
                 )
             }
 

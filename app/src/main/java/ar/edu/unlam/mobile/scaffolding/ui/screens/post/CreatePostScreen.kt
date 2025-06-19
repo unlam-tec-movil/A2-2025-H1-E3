@@ -14,8 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,29 +37,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.Avatar
+import ar.edu.unlam.mobile.scaffolding.ui.components.QuoteCard
+import ar.edu.unlam.mobile.scaffolding.ui.screens.FeedUIState
+import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserSessionViewModel
-import ar.edu.unlam.mobile.scaffolding.utils.decode
 
 @Composable
 fun CreatePostScreen(
     viewModel: CreatePostViewModel = hiltViewModel(),
     userSessionViewModel: UserSessionViewModel = hiltViewModel(),
     navController: NavController,
-    backStackEntry: NavBackStackEntry,
+    parentId: Int?,
 ) {
     val uiState: CreatePostState by viewModel.uiState.collectAsState()
+
+    // Datos del usuario para mostrar
     val user by userSessionViewModel.user.collectAsState()
     val context = LocalContext.current
 
-    // Usuario al que estamos respondiendo el post
-    val id = backStackEntry.arguments?.getInt("id")
-    val author = backStackEntry.arguments?.getString("author")?.decode()
-    val quotedMessage = backStackEntry.arguments?.getString("message")?.decode()
+    // Buscamos el post original
+    val homeViewModel: HomeViewModel = hiltViewModel()
+    val homeUiState by homeViewModel.uiState.collectAsState()
+    val quotedPost = (homeUiState.feedUiState as? FeedUIState.Success)?.posts?.find { it.id == parentId }
 
-    // Poner el foco en el input
+    // Poner el foco en el input del mensaje a redactar
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
@@ -89,9 +90,12 @@ fun CreatePostScreen(
     Scaffold(
         topBar = {
             CreatePostTopBar(
-                onBackClick = { navController.popBackStack() },
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                // Accion de Publicar
                 onPostClick = {
-                    viewModel.addPost(isDraft = false, parentId = id)
+                    viewModel.addPost(isDraft = false, parentId = parentId)
                 },
                 enabled = uiState.message.isNotBlank() && uiState.message.length <= 280,
             )
@@ -104,6 +108,7 @@ fun CreatePostScreen(
                         .padding(horizontal = 16.dp)
                         .fillMaxSize(),
             ) {
+                // Input para redactar el mensaje
                 PostTextFieldSection(
                     avatarUrl = user?.avatarUrl,
                     message = uiState.message,
@@ -111,14 +116,22 @@ fun CreatePostScreen(
                     focusRequester = focusRequester,
                 )
 
+                // Indicador de cantidad de caracteres
                 PostLengthIndicator(length = uiState.message.length)
 
-                if (!quotedMessage.isNullOrBlank() && !author.isNullOrBlank()) {
-                    QuotedMessageCard(author = author, message = quotedMessage)
+                // Mostrar mensaje citado si existe
+                if (quotedPost != null) {
+                    Text(
+                        text = "Respondiendo a:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    QuoteCard(post = quotedPost)
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
 
+                // Acciçon de guardar como borrador
                 PostDraftButton(
                     enabled = uiState.message.isNotBlank() && uiState.message.length <= 280,
                     onClick = {
@@ -211,26 +224,6 @@ fun PostLengthIndicator(length: Int) {
         style = MaterialTheme.typography.labelSmall,
         color = if (length > 280) Color.Red else Color.Gray,
     )
-}
-
-@Composable
-fun QuotedMessageCard(
-    author: String,
-    message: String,
-) {
-    Card(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text("Respondiendo a @$author", style = MaterialTheme.typography.labelMedium)
-            Text(text = message, style = MaterialTheme.typography.bodyMedium)
-        }
-    }
 }
 
 @Composable

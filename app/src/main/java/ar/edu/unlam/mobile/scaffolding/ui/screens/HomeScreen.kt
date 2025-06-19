@@ -28,7 +28,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.LogoutConfirmationDialog
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostOptionsBottomSheet
 import ar.edu.unlam.mobile.scaffolding.ui.components.UserHeader
 import ar.edu.unlam.mobile.scaffolding.ui.components.rememberHeaderVisibility
-import ar.edu.unlam.mobile.scaffolding.utils.encode
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,6 +43,7 @@ fun HomeScreen(
     val user by userSessionViewModel.user.collectAsState()
     val favoriteUsers by viewModel.favoriteUsers.collectAsState()
 
+    // Actualizar la lista de post luego de crear uno nuevo
     // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
     val shouldRefreshFlow =
         navController.currentBackStackEntry
@@ -79,10 +79,7 @@ fun HomeScreen(
             post = selectedPost!!,
             onDismiss = { isSheetOpen = false },
             onReply = { post ->
-                val id = post.id
-                val author = post.author.encode()
-                val message = post.message.encode()
-                navController.navigate("addPost/$id/$author/$message")
+                navController.navigate("addPost?replyTo=${post.id}")
             },
             onViewReplies = { post ->
                 navController.navigate("quotes/${post.id}")

@@ -31,7 +31,6 @@ fun UserHeader(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(12.dp),

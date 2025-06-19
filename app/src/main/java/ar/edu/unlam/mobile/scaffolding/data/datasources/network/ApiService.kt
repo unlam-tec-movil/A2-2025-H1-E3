@@ -5,6 +5,7 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignInRe
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.LoginResponse
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.SignInResponse
 import ar.edu.unlam.mobile.scaffolding.data.models.CreatePostRequestDto
+import ar.edu.unlam.mobile.scaffolding.data.models.EditUserRequestDto
 import ar.edu.unlam.mobile.scaffolding.data.models.PostResponseDto
 import ar.edu.unlam.mobile.scaffolding.data.models.ReplyRequestDto
 import ar.edu.unlam.mobile.scaffolding.data.models.UserProfileResponseDto
@@ -13,6 +14,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ApiService {
@@ -57,4 +59,9 @@ interface ApiService {
     suspend fun removeLike(
         @Path("tuit_id") postId: String,
     )
+
+    @PUT("api/v1/me/profile")
+    suspend fun editUser(
+        @Body request: EditUserRequestDto,
+    ): Response<Unit>
 }

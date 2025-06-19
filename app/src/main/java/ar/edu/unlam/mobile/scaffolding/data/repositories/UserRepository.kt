@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
+import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AuthToken
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.FavoriteUserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
@@ -13,6 +14,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
+import java.io.IOException
 
 class UserRepository(
     private val apiService: ApiService,
@@ -42,11 +44,21 @@ class UserRepository(
         email: String,
         password: String,
     ): String {
-        val response = apiService.login(LoginRequest(email, password))
-        if (response.isSuccessful) {
-            return response.body()?.token ?: throw Exception("Token vacío")
-        } else {
-            throw Exception("Error ${response.code()}")
+        try {
+            val response = apiService.login(LoginRequest(email, password))
+            if (response.isSuccessful) {
+                return response.body()?.token ?: throw Exception("Token vacío")
+            } else {
+                Log.e("AuthRepository", "Login failed - HTTP ${response.code()}: ${response.message()}")
+
+                when (response.code()) {
+                    401 -> throw Exception("Credenciales incorrectas")
+                    500, 502, 503 -> throw Exception("Servidor temporalmente no disponible")
+                    else -> throw Exception("Error del servidor ${response.code()}")
+                }
+            }
+        } catch (e: IOException) {
+            throw Exception("Error de conexión. Verificá tu internet", e)
         }
     }
 

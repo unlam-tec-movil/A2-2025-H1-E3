@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 fun EmptyState(
     message: String,
     onBackClick: () -> Unit,
+    showOnBack: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -35,9 +36,10 @@ fun EmptyState(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            Button(onClick = onBackClick) {
-                Text("Volver")
+            if (showOnBack) {
+                Button(onClick = onBackClick) {
+                    Text("Volver")
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 
 @Composable
@@ -14,26 +15,31 @@ fun Quotes(
     posts: List<Post>,
     modifier: Modifier,
     onBackClick: () -> Unit,
+    quotedPost: Post,
 ) {
-    if (posts.isEmpty()) {
-        // Mostrar mensaje vacío con botón volver
-        EmptyState(
-            message = "No hay items para mostrar",
-            onBackClick = onBackClick,
-            modifier = modifier,
-        )
-    } else {
-        Scaffold(
-            topBar = {
-                CustomHeader("Respuestas", onBack = onBackClick)
-            },
-        ) { padding ->
-            LazyColumn(
-                modifier =
-                    modifier
-                        .fillMaxSize()
-                        .padding(padding),
-            ) {
+    Scaffold(
+        topBar = {
+            CustomHeader("Respuestas de:", onBack = onBackClick)
+        },
+    ) { padding ->
+        LazyColumn(
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(padding),
+        ) {
+            item {
+                QuoteCard(quotedPost)
+            }
+            if (posts.isEmpty()) {
+                item {
+                    EmptyState(
+                        message = "No hay respuestas para este post aún.",
+                        onBackClick = onBackClick,
+                        modifier = Modifier.fillMaxSize().padding(top = 32.dp),
+                    )
+                }
+            } else {
                 items(posts) { post ->
                     QuoteCard(post)
                 }

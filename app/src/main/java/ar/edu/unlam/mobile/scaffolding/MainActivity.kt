@@ -69,24 +69,22 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
     val navBackStackEntry = controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
-    // agregamos las rutas donde queremos que no se vea la bottom bar o el fab
-    val hideFabRoutes = listOf("addPost", "login", "signIn", "quotes", "user", "about")
+    // agregamos las rutas donde queremos que no se vea la bottom bar o el fav
     val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes", "user", "about")
 
-    val shouldHideFab = hideFabRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
-    val shouldHideBottomBar =
+    val shouldHideBottomBarAndFav =
         hideBottomBarRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
 
     Scaffold(
         // oculta la nav bar en pantalla de registro
         bottomBar = {
-            if (!shouldHideBottomBar) {
+            if (!shouldHideBottomBarAndFav) {
                 BottomBar(controller = controller)
             }
         },
         floatingActionButton = {
             // oculta el botón en algunas pantallas
-            if (!shouldHideFab) {
+            if (!shouldHideBottomBarAndFav) {
                 IconButton(
                     modifier =
                         Modifier.background(
@@ -139,34 +137,34 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
             ) {
                 UserScreen(navController = controller)
             }
-            composable("quotes/{postId}") { backStackEntry ->
-                val postId = backStackEntry.arguments?.getString("postId")?.toIntOrNull() ?: 0
+            composable(
+                route = "quotes/{postId}",
+                arguments =
+                    listOf(
+                        navArgument("postId") { type = NavType.IntType },
+                    ),
+            ) { backStackEntry ->
+                val postId = backStackEntry.arguments?.getInt("postId") ?: return@composable
                 QuotesScreen(
-                    postId = postId,
                     navController = controller,
                     snackbarHostState = snackbarHostState,
                     modifier = Modifier.padding(paddingValue),
+                    postId = postId,
                 )
             }
 
-            // Sin parámetros (nuevo post)
-            composable("addPost") {
-                CreatePostScreen(
-                    navController = controller,
-                    backStackEntry = it,
-                )
-            }
-            // Con parámetros (cita de post)
             composable(
-                route = "addPost/{id}/{author}/{message}",
+                route = "addPost?replyTo={replyTo}",
                 arguments =
                     listOf(
-                        navArgument("id") { type = NavType.IntType },
-                        navArgument("author") { type = NavType.StringType },
-                        navArgument("message") { type = NavType.StringType },
+                        navArgument("replyTo") {
+                            type = NavType.IntType
+                            defaultValue = -1
+                        },
                     ),
             ) { backStackEntry ->
-                CreatePostScreen(navController = controller, backStackEntry = backStackEntry)
+                val replyTo = backStackEntry.arguments?.getInt("replyTo")?.takeIf { it != -1 }
+                CreatePostScreen(navController = controller, parentId = replyTo)
             }
             composable("about") {
                 AboutScreen(navController = controller)

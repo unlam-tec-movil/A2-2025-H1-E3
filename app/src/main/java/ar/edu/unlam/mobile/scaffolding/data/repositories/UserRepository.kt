@@ -9,6 +9,7 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignInRe
 import ar.edu.unlam.mobile.scaffolding.data.mappers.toDomain
 import ar.edu.unlam.mobile.scaffolding.data.mappers.toFavoriteUser
 import ar.edu.unlam.mobile.scaffolding.data.mappers.toUser
+import ar.edu.unlam.mobile.scaffolding.data.models.EditUserRequestDto
 import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
 import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
 import kotlinx.coroutines.flow.Flow
@@ -49,7 +50,10 @@ class UserRepository(
             if (response.isSuccessful) {
                 return response.body()?.token ?: throw Exception("Token vacío")
             } else {
-                Log.e("AuthRepository", "Login failed - HTTP ${response.code()}: ${response.message()}")
+                Log.e(
+                    "AuthRepository",
+                    "Login failed - HTTP ${response.code()}: ${response.message()}",
+                )
 
                 when (response.code()) {
                     401 -> throw Exception("Credenciales incorrectas")
@@ -94,4 +98,24 @@ class UserRepository(
         favoriteUserDao
             .getAllFavoriteUsers()
             .map { favoriteList -> favoriteList.map { it.toUser() } }
+
+    override suspend fun editUser(
+        name: String,
+        avatarUrl: String,
+        password: String,
+    ) {
+        val request = EditUserRequestDto(name, avatarUrl, password)
+        val response = apiService.editUser(request)
+        if (response.isSuccessful) {
+            val currentUser = authToken.cachedUser
+            if (currentUser != null) {
+                val updatedUser =
+                    currentUser.copy(
+                        name = name,
+                        avatarUrl = avatarUrl.ifBlank { currentUser.avatarUrl },
+                    )
+                authToken.cachedUser = updatedUser
+            }
+        }
+    }
 }

@@ -30,4 +30,10 @@ interface IUserRepository {
     suspend fun deleteFavoriteUser(user: User)
 
     fun getAllFavoriteUser(): Flow<List<User>>
+
+    suspend fun editUser(
+        name: String,
+        avatarUrl: String,
+        password: String,
+    )
 }

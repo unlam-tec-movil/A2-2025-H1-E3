@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 data class LoginState(
@@ -76,13 +74,7 @@ class LoginViewModel
                     loginUseCase(_uiState.value.email, _uiState.value.password)
                     onSuccess()
                 } catch (e: Exception) {
-                    val errorMsg =
-                        when (e) {
-                            is HttpException -> "Servidor no disponible"
-                            is IOException -> "Error de red"
-                            else -> "Usuario o contraseña incorrectos"
-                        }
-                    onError(errorMsg)
+                    onError(e.message ?: "Error desconocido")
                 } finally {
                     setLoading(false)
                 }

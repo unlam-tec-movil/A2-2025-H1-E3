@@ -8,6 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,9 +47,19 @@ class FavoriteUsersViewModel
 
         private fun getFavoriteUsers() {
             viewModelScope.launch {
-                getFavoriteUsersUseCase().collect { favorites ->
-                    _favoriteUsers.value = favorites
-                }
+                getFavoriteUsersUseCase()
+                    .onStart {
+                        _uiState.value = FavoriteState(FavoriteUIState.Loading)
+                    }.catch { throwable ->
+                        _uiState.value =
+                            FavoriteState(
+                                FavoriteUIState.Error(
+                                    "Error cargando los Favoritos",
+                                ),
+                            )
+                    }.collect { favorites ->
+                        _uiState.value = FavoriteState(FavoriteUIState.Success(favorites))
+                    }
             }
         }
     }

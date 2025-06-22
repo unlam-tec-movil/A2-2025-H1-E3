@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -173,7 +172,6 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
                 FavUsersScreen(
                     snackbarHostState = snackbarHostState,
                     navController = controller,
-                    listState = rememberLazyListState(),
                     modifier = Modifier.padding(paddingValue),
                 )
             }

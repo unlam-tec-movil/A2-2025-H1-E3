@@ -3,9 +3,6 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -18,17 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import ar.edu.unlam.mobile.scaffolding.ui.components.CustomHeader
-import ar.edu.unlam.mobile.scaffolding.ui.components.FavoriteUserCard
+import ar.edu.unlam.mobile.scaffolding.ui.components.Favorites
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavUsersScreen(
     viewModel: FavoriteUsersViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState,
-    listState: LazyListState,
-    navController: NavController,
     modifier: Modifier,
+    snackbarHostState: SnackbarHostState,
+    navController: NavController,
 ) {
     val uiState: FavoriteState by viewModel.uiState.collectAsState()
 
@@ -48,23 +43,13 @@ fun FavUsersScreen(
 
             // success component
             is FavoriteUIState.Success -> {
-                CustomHeader(
-                    title = "Usuarios Favoritos",
-                ) { }
-                LazyColumn(
-                    state = listState,
-                    modifier =
-                        modifier
-                            .padding()
-                            .fillMaxSize()
-                            .padding(paddingValues),
-                ) {
-                    items(userState.users) { user ->
-                        FavoriteUserCard(
-                            user = user,
-                        )
-                    }
-                }
+                Favorites(
+                    users = userState.users,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    modifier = modifier.padding(paddingValues),
+                )
             }
 
             // error component

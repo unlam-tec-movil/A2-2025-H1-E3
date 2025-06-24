@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.AboutScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.FavUsersScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.QuotesScreen
@@ -166,6 +167,15 @@ fun MainScreen(viewModel: SplashViewModel = hiltViewModel()) {
                 val replyTo = backStackEntry.arguments?.getInt("replyTo")?.takeIf { it != -1 }
                 CreatePostScreen(navController = controller, parentId = replyTo)
             }
+
+            composable("favorites") {
+                FavUsersScreen(
+                    snackbarHostState = snackbarHostState,
+                    navController = controller,
+                    modifier = Modifier.padding(paddingValue),
+                )
+            }
+
             composable("about") {
                 AboutScreen(navController = controller)
             }

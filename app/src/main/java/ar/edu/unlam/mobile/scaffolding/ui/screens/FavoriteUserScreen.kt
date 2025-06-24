@@ -49,6 +49,7 @@ fun FavUsersScreen(
                         navController.popBackStack()
                     },
                     modifier = modifier.padding(paddingValues),
+                    onFollowClick = { user -> viewModel.offFavorite(user) },
                 )
             }
 

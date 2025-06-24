@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.DeleteFavoriteUserUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetFavoriteUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +35,7 @@ class FavoriteUsersViewModel
     @Inject
     constructor(
         private val getFavoriteUsersUseCase: GetFavoriteUsersUseCase,
+        private val deleteFavoriteUserUseCase: DeleteFavoriteUserUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(FavoriteState(FavoriteUIState.Loading))
         val uiState = _uiState.asStateFlow()
@@ -60,6 +62,12 @@ class FavoriteUsersViewModel
                     }.collect { favorites ->
                         _uiState.value = FavoriteState(FavoriteUIState.Success(favorites))
                     }
+            }
+        }
+
+        fun offFavorite(user: User) {
+            viewModelScope.launch {
+                deleteFavoriteUserUseCase(user)
             }
         }
     }

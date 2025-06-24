@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
+import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -24,6 +25,7 @@ fun Feed(
     favoriteUsernames: Set<String>,
     onFollowClick: (Post) -> Unit,
     onLikeClick: (Post) -> Unit,
+    currentUser: User?,
 ) {
     val repliesMap: Map<Int, Int> = posts.groupingBy { it.parentId }.eachCount()
     LazyColumn(
@@ -44,6 +46,7 @@ fun Feed(
         items(posts) { post ->
             val repliesCount = repliesMap[post.id] ?: 0
             val isFollowing = favoriteUsernames.contains(post.author)
+            val isCurrentUserPost = currentUser?.name == post.author
             PostCard(
                 post,
                 repliesCount,
@@ -51,6 +54,7 @@ fun Feed(
                 onReplyClick = { onOptionsClick(post) },
                 isFollowing = isFollowing,
                 onFollowClick = { onFollowClick(post) },
+                showFollowButton = !isCurrentUserPost,
             )
         }
     }

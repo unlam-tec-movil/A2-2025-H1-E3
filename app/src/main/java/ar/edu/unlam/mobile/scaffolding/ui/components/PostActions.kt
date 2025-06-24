@@ -31,6 +31,7 @@ fun PostActions(
     onReplyClick: () -> Unit,
     isFollowing: Boolean,
     onFollowClick: () -> Unit,
+    showFollowButton: Boolean,
 ) {
     val heartColor by animateColorAsState(
         targetValue = if (post.liked) Color.Red else Color.Gray,
@@ -72,12 +73,14 @@ fun PostActions(
         Spacer(modifier = Modifier.weight(1f)) // Esto empuja el botón hasta el final
 
         // Follow Button
-        TextButton(onClick = onFollowClick) {
-            Text(
-                text = if (isFollowing) "Siguiendo" else "Seguir",
-                style = MaterialTheme.typography.labelSmall,
-                color = if (isFollowing) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        if (showFollowButton) {
+            TextButton(onClick = onFollowClick) {
+                Text(
+                    text = if (isFollowing) "Siguiendo" else "Seguir",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (isFollowing) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

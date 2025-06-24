@@ -25,6 +25,7 @@ fun PostCard(
     onReplyClick: () -> Unit,
     isFollowing: Boolean,
     onFollowClick: () -> Unit,
+    showFollowButton: Boolean,
 ) {
     val heartColor by animateColorAsState(
         targetValue = if (post.liked) Color.Red else Color.Gray,
@@ -53,6 +54,7 @@ fun PostCard(
                 onLikeClick = onLikeClick,
                 isFollowing = isFollowing,
                 onFollowClick = onFollowClick,
+                showFollowButton = showFollowButton,
             )
         }
     }

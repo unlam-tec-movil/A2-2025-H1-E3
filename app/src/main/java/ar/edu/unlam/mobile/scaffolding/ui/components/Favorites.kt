@@ -15,6 +15,7 @@ fun Favorites(
     users: List<User>,
     onBackClick: () -> Unit,
     modifier: Modifier,
+    onFollowClick: (User) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -38,7 +39,10 @@ fun Favorites(
                 }
             } else {
                 items(users) { user ->
-                    FavoriteUserCard(user)
+                    FavoriteUserCard(
+                        user,
+                        onFollowClick = { onFollowClick(user) },
+                    )
                 }
             }
         }

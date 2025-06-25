@@ -15,7 +15,7 @@ interface IPostRepository {
         message: String,
     )
 
-    suspend fun addLike(postId: String)
+    fun addLike(postId: String): Flow<Post>
 
-    suspend fun removeLike(postId: String)
+    fun removeLike(postId: String): Flow<Post>
 }

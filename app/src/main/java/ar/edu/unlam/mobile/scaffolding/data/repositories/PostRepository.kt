@@ -91,19 +91,15 @@ class PostRepository(
         }
     }
 
-    override suspend fun addLike(postId: String) {
-        try {
-            apiService.addLike(postId)
-        } catch (e: HttpException) {
-            throw e
-        }
-    }
+    override fun addLike(postId: String): Flow<Post> =
+        flow {
+            val response = apiService.addLike(postId)
+            emit(response.toDomain())
+        }.flowOn(Dispatchers.IO)
 
-    override suspend fun removeLike(postId: String) {
-        try {
-            apiService.removeLike(postId)
-        } catch (e: HttpException) {
-            throw e
-        }
-    }
+    override fun removeLike(postId: String): Flow<Post> =
+        flow {
+            val response = apiService.removeLike(postId)
+            emit(response.toDomain())
+        }.flowOn(Dispatchers.IO)
 }

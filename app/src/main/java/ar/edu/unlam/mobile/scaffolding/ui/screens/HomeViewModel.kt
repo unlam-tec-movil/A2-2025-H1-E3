@@ -116,49 +116,68 @@ class HomeViewModel
 
         fun isFavorite(author: String): Flow<Boolean> = favoriteUsers.map { list -> list.any { it.name == author } }
 
-        // Optimismo visual: mejora la experiencia del usuario al ver el cambio instantáneamente.
-        // Reversión segura: si algo falla, se recupera el estado anterior.
-        // Separación de lógica: lo visual (updateFeedState) está separado del uso de red (toggleLikeUseCase).
+        // Con flow
         fun toggleLike(post: Post) {
-            // Obtiene el estado actual del feed, que puede ser Loading, Error o Success.
-            val currentFeedState = _uiState.value.feedUiState
-
-            // Solo seguimos si el estado es Success, porque eso significa que ya se cargaron los posts y podemos modificarlos.
-            if (currentFeedState is FeedUIState.Success) {
-                // Se obtiene la lista de posts actual como una lista mutable para poder modificarla.
-                val currentPosts = currentFeedState.posts.toMutableList()
-
-                // Buscamos la posición del post en la lista original.
-                val index = currentPosts.indexOfFirst { it.id == post.id }
-
-                // Si no lo encontramos (-1), terminamos la función (no hacemos nada).
-                if (index == -1) return
-
-                // Creamos una copia del post con el liked invertido (true → false, o viceversa),
-                // y actualizamos la cantidad de likes.
-                val updatedPost =
-                    post.copy(
-                        liked = !post.liked,
-                        likes = if (post.liked) post.likes - 1 else post.likes + 1,
-                    )
-
-                // Reemplazamos el post original en la lista con su versión actualizada (liked cambiado)
-                currentPosts[index] = updatedPost
-
-                // Actualizamos el estado de la UI para que se vea el cambio en pantalla
-                // de inmediato (optimismo visual).
-                _uiState.value = PostUIState(FeedUIState.Success(currentPosts))
-
-                // Lanza una corutina para Enviar el “like” (o “unlike”) al servidor mediante toggleLikeUseCase.
-                viewModelScope.launch {
-                    try {
-                        toggleLikeUseCase(post.id.toString(), updatedPost.liked)
-                    } catch (e: Exception) {
-                        // Revertir en caso de error
-                        currentPosts[index] = post
-                        _uiState.value = PostUIState(FeedUIState.Success(currentPosts))
+            viewModelScope.launch {
+                toggleLikeUseCase(post.id.toString(), !post.liked) // alterna el like
+                    .catch { e ->
+                        _uiState.value = PostUIState(FeedUIState.Error("Error al dar like"))
+                    }.collect { updatedPost ->
+                        val currentState = _uiState.value.feedUiState
+                        if (currentState is FeedUIState.Success) {
+                            val updatedPosts =
+                                currentState.posts.map {
+                                    if (it.id == updatedPost.id) updatedPost else it
+                                }
+                            _uiState.value = PostUIState(FeedUIState.Success(updatedPosts))
+                        }
                     }
-                }
             }
         }
+
+//        // Optimismo visual: mejora la experiencia del usuario al ver el cambio instantáneamente.
+//        // Reversión segura: si algo falla, se recupera el estado anterior.
+//        // Separación de lógica: lo visual (updateFeedState) está separado del uso de red (toggleLikeUseCase).
+//        fun toggleLike(post: Post) {
+//            // Obtiene el estado actual del feed, que puede ser Loading, Error o Success.
+//            val currentFeedState = _uiState.value.feedUiState
+//
+//            // Solo seguimos si el estado es Success, porque eso significa que ya se cargaron los posts y podemos modificarlos.
+//            if (currentFeedState is FeedUIState.Success) {
+//                // Se obtiene la lista de posts actual como una lista mutable para poder modificarla.
+//                val currentPosts = currentFeedState.posts.toMutableList()
+//
+//                // Buscamos la posición del post en la lista original.
+//                val index = currentPosts.indexOfFirst { it.id == post.id }
+//
+//                // Si no lo encontramos (-1), terminamos la función (no hacemos nada).
+//                if (index == -1) return
+//
+//                // Creamos una copia del post con el liked invertido (true → false, o viceversa),
+//                // y actualizamos la cantidad de likes.
+//                val updatedPost =
+//                    post.copy(
+//                        liked = !post.liked,
+//                        likes = if (post.liked) post.likes - 1 else post.likes + 1,
+//                    )
+//
+//                // Reemplazamos el post original en la lista con su versión actualizada (liked cambiado)
+//                currentPosts[index] = updatedPost
+//
+//                // Actualizamos el estado de la UI para que se vea el cambio en pantalla
+//                // de inmediato (optimismo visual).
+//                _uiState.value = PostUIState(FeedUIState.Success(currentPosts))
+//
+//                // Lanza una corutina para Enviar el “like” (o “unlike”) al servidor mediante toggleLikeUseCase.
+//                viewModelScope.launch {
+//                    try {
+//                        toggleLikeUseCase(post.id.toString(), updatedPost.liked)
+//                    } catch (e: Exception) {
+//                        // Revertir en caso de error
+//                        currentPosts[index] = post
+//                        _uiState.value = PostUIState(FeedUIState.Success(currentPosts))
+//                    }
+//                }
+//            }
+//        }
     }

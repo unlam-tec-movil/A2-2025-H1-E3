@@ -53,12 +53,12 @@ interface ApiService {
     @POST("api/v1/me/tuits/{tuit_id}/likes")
     suspend fun addLike(
         @Path("tuit_id") postId: String,
-    )
+    ): PostResponseDto
 
     @DELETE("api/v1/me/tuits/{tuit_id}/likes")
     suspend fun removeLike(
         @Path("tuit_id") postId: String,
-    )
+    ): PostResponseDto
 
     @PUT("api/v1/me/profile")
     suspend fun editUser(

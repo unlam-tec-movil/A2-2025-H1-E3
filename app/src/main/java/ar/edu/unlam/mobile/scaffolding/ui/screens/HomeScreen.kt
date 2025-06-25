@@ -130,7 +130,7 @@ fun HomeScreen(
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
     // agregamos las rutas donde queremos que no se vea la bottom bar o el fav
-    val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes", "user", "about")
+    val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes", "user", "about", "draft")
 
     val shouldHideBottomBarAndFav =
         hideBottomBarRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }

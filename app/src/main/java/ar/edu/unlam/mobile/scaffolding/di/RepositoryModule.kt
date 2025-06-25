@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.DraftDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.FavoriteUserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
@@ -17,7 +18,10 @@ import javax.inject.Singleton
 object RepositoryModule {
     // --- Repositorios ---
     @Provides
-    fun providerPostRepository(apiService: ApiService): IPostRepository = PostRepository(apiService)
+    fun providerPostRepository(
+        apiService: ApiService,
+        draftDao: DraftDao,
+    ): IPostRepository = PostRepository(apiService, draftDao)
 
     @Provides @Singleton
     fun providerUserRepository(

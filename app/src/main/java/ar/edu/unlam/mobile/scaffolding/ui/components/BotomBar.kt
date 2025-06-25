@@ -33,7 +33,7 @@ fun BottomBar(controller: NavHostController) {
 
         NavigationBarItem(
             selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "draft" } == true,
-            onClick = { },
+            onClick = { controller.navigate("draft") },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Drafts,

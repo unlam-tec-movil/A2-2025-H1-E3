@@ -38,11 +38,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.domain.post.models.Draft
 import ar.edu.unlam.mobile.scaffolding.ui.components.Avatar
 import ar.edu.unlam.mobile.scaffolding.ui.components.QuoteCard
 import ar.edu.unlam.mobile.scaffolding.ui.screens.FeedUIState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserSessionViewModel
+import ar.edu.unlam.mobile.scaffolding.utils.decode
 
 @Composable
 fun CreatePostScreen(
@@ -50,6 +52,8 @@ fun CreatePostScreen(
     userSessionViewModel: UserSessionViewModel = hiltViewModel(),
     navController: NavController,
     parentId: Int?,
+    draftMessage: String?,
+    draftId: Int?,
 ) {
     val uiState: CreatePostState by viewModel.uiState.collectAsState()
 
@@ -67,11 +71,18 @@ fun CreatePostScreen(
 
     LaunchedEffect(Unit) {
         viewModel.resetState()
+        draftMessage?.let { viewModel.onMessageChange(it.decode()) }
         focusRequester.requestFocus()
     }
 
+    val draftViewModel: DraftViewModel = hiltViewModel()
+
     when (val createPostState = uiState.createPostUiState) {
         is CreatePostUIState.Success -> {
+            draftId?.let {
+                draftViewModel.deleteDraft(Draft(id = draftId, message = ""))
+                navController.popBackStack()
+            }
             navController.previousBackStackEntry?.savedStateHandle?.set("shouldRefresh", true)
             navController.popBackStack()
         }

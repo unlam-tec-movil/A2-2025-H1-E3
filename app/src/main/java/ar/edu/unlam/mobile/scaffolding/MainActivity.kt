@@ -38,6 +38,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.SignInScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserSessionViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.CreatePostScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.DraftScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -160,10 +161,18 @@ fun MainScreen(sessionViewModel: UserSessionViewModel = hiltViewModel()) {
                         }
 
                         composable(
-                            route = "addPost?replyTo={replyTo}",
+                            route = "addPost?replyTo={replyTo}&draftMessage={draftMessage}&draftId={draftId}",
                             arguments =
                                 listOf(
                                     navArgument("replyTo") {
+                                        type = NavType.IntType
+                                        defaultValue = -1
+                                    },
+                                    navArgument("draftMessage") {
+                                        type = NavType.StringType
+                                        defaultValue = ""
+                                    },
+                                    navArgument("draftId") {
                                         type = NavType.IntType
                                         defaultValue = -1
                                     },
@@ -171,7 +180,16 @@ fun MainScreen(sessionViewModel: UserSessionViewModel = hiltViewModel()) {
                         ) { backStackEntry ->
                             val replyTo =
                                 backStackEntry.arguments?.getInt("replyTo")?.takeIf { it != -1 }
-                            CreatePostScreen(navController = controller, parentId = replyTo)
+                            val draftMessage =
+                                backStackEntry.arguments?.getString("draftMessage")?.takeIf { it != "" }
+                            val draftId =
+                                backStackEntry.arguments?.getInt("draftId")?.takeIf { it != -1 }
+                            CreatePostScreen(
+                                navController = controller,
+                                parentId = replyTo,
+                                draftMessage = draftMessage,
+                                draftId = draftId,
+                            )
                         }
 
                         composable("favorites") {
@@ -184,6 +202,10 @@ fun MainScreen(sessionViewModel: UserSessionViewModel = hiltViewModel()) {
 
                         composable("about") {
                             AboutScreen(navController = controller)
+                        }
+
+                        composable("draft") {
+                            DraftScreen(navController = controller)
                         }
                     }
                 }

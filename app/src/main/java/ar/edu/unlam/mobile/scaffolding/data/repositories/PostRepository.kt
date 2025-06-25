@@ -1,9 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.DraftDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
 import ar.edu.unlam.mobile.scaffolding.data.mappers.toDomain
+import ar.edu.unlam.mobile.scaffolding.data.mappers.toEntity
 import ar.edu.unlam.mobile.scaffolding.data.models.CreatePostRequestDto
 import ar.edu.unlam.mobile.scaffolding.data.models.ReplyRequestDto
+import ar.edu.unlam.mobile.scaffolding.domain.post.models.Draft
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.domain.post.repository.IPostRepository
 import coil.network.HttpException
@@ -11,10 +14,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 class PostRepository(
     // Implementación para el repositorio de Post
     private val apiService: ApiService,
+    private val draftDao: DraftDao,
 ) : IPostRepository {
 // Documentacion de Flow (Tambien ver dispositiva de clase)
 // https://developer.android.com/kotlin/flow?hl=es-419
@@ -105,5 +110,20 @@ class PostRepository(
         } catch (e: HttpException) {
             throw e
         }
+    }
+
+    override fun getDrafts(): Flow<List<Draft>> =
+        draftDao
+            .getAllDraft()
+            .map { draftList ->
+                draftList.map { it.toDomain() }
+            }
+
+    override suspend fun saveDraft(draft: Draft) {
+        draftDao.insertDraft(draft.toEntity())
+    }
+
+    override suspend fun removeDraft(draft: Draft) {
+        draftDao.deleteDraft(draft.toEntity())
     }
 }

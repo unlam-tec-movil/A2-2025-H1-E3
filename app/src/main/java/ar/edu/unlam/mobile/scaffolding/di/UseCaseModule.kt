@@ -3,8 +3,11 @@ package ar.edu.unlam.mobile.scaffolding.di
 import ar.edu.unlam.mobile.scaffolding.domain.post.repository.IPostRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.DeleteDraftUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetDraftUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetPostsUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetQuotesUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.SaveDraftUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.ToggleLikeUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.repository.ISessionRepository
 import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
@@ -39,6 +42,15 @@ object UseCaseModule {
 
     @Provides
     fun provideCreateReplyUseCase(repo: IPostRepository): CreateReplyUseCase = CreateReplyUseCase(repo)
+
+    @Provides
+    fun provideGetDraftUseCase(repo: IPostRepository): GetDraftUseCase = GetDraftUseCase(repo)
+
+    @Provides
+    fun provideSaveDraftUseCase(repo: IPostRepository): SaveDraftUseCase = SaveDraftUseCase(repo)
+
+    @Provides
+    fun provideDeleteDraftUseCase(repo: IPostRepository): DeleteDraftUseCase = DeleteDraftUseCase(repo)
 
     @Provides
     fun provideLoginUseCase(

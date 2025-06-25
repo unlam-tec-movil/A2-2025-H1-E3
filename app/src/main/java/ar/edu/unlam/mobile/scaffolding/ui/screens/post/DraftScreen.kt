@@ -1,0 +1,149 @@
+package ar.edu.unlam.mobile.scaffolding.ui.screens.post
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Publish
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.domain.post.models.Draft
+import ar.edu.unlam.mobile.scaffolding.utils.encode
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DraftScreen(
+    navController: NavController,
+    viewModel: DraftViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadDrafts()
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Borradores") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBackIosNew, contentDescription = "Volver")
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        when (val state = uiState.draftUIState) {
+            is DraftUIState.Loading -> {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            is DraftUIState.Success -> {
+                Column(
+                    modifier =
+                        Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                            .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    if (state.drafts.isEmpty()) {
+                        Text("No hay borradores guardados.")
+                    } else {
+                        state.drafts.forEach { draft ->
+                            DraftItem(
+                                draft = draft,
+                                onDelete = { viewModel.deleteDraft(draft) },
+                                onPublish = { draftId, draftMessage ->
+                                    navController.navigate(
+                                        "addPost?replyTo={replyTo}&&draftMessage=" +
+                                            "${draftMessage.encode()}&draftId=$draftId",
+                                    )
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+            is DraftUIState.Error -> {
+                Text(
+                    text = state.message,
+                    modifier =
+                        Modifier
+                            .padding(innerPadding)
+                            .padding(16.dp),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DraftItem(
+    draft: Draft,
+    onDelete: () -> Unit,
+    onPublish: (Int, String) -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+    ) {
+        Text(
+            text = draft.message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(
+                onClick = { onPublish(draft.id, draft.message) },
+                modifier = Modifier.weight(1f),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                shape = RoundedCornerShape(10.dp),
+            ) {
+                Icon(Icons.Default.Publish, contentDescription = "Publicar")
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Publicar")
+            }
+
+            Button(
+                onClick = onDelete,
+                modifier = Modifier.weight(1f),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError,
+                    ),
+                shape = RoundedCornerShape(10.dp),
+            ) {
+                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Eliminar")
+            }
+        }
+    }
+    // Línea separadora
+    HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+}

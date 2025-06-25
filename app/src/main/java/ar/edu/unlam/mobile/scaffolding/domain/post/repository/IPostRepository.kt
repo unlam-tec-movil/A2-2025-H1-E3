@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.domain.post.repository
 
+import ar.edu.unlam.mobile.scaffolding.domain.post.models.Draft
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import kotlinx.coroutines.flow.Flow
 
@@ -18,4 +19,10 @@ interface IPostRepository {
     suspend fun addLike(postId: String)
 
     suspend fun removeLike(postId: String)
+
+    fun getDrafts(): Flow<List<Draft>>
+
+    suspend fun saveDraft(draft: Draft)
+
+    suspend fun removeDraft(draft: Draft)
 }

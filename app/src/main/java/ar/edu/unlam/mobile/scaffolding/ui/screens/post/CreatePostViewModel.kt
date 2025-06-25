@@ -3,8 +3,10 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.domain.post.models.Draft
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.SaveDraftUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,6 +44,7 @@ class CreatePostViewModel
     constructor(
         private val createPostUseCase: CreatePostUseCase,
         private val createReplyUseCase: CreateReplyUseCase,
+        private val saveDraftUseCase: SaveDraftUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(CreatePostState(CreatePostUIState.Idle))
         val uiState = _uiState.asStateFlow()
@@ -63,6 +66,13 @@ class CreatePostViewModel
                     when {
                         isDraft -> {
                             // llamar aca al metodo para guardar el borrador
+                            val draft =
+                                Draft(
+                                    id = 0,
+                                    message = currentMessage,
+                                )
+                            saveDraftUseCase(draft)
+
                             _uiState.update {
                                 it.copy(
                                     createPostUiState = CreatePostUIState.SuccessDraft(currentMessage),

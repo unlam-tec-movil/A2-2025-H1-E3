@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,7 +53,13 @@ fun LoginScreen(
             modifier =
                 Modifier
                     .size(120.dp)
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 8.dp),
+        )
+        Text(
+            text = "X Clone",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.primary,
         )
 
         Spacer(modifier = Modifier.weight(.5f))

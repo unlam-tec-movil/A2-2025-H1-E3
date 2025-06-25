@@ -15,15 +15,7 @@ interface IUserRepository {
         password: String,
     ): String
 
-    suspend fun isUserLogged(): Boolean
-
     suspend fun getUserProfile(): User
-
-    suspend fun getCachedUser(): User?
-
-    suspend fun saveCachedUser(user: User)
-
-    suspend fun clearCachedUser()
 
     suspend fun insertFavoriteUser(user: User)
 
@@ -35,5 +27,5 @@ interface IUserRepository {
         name: String,
         avatarUrl: String,
         password: String,
-    )
+    ): User
 }

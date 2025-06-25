@@ -1,12 +1,19 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -21,9 +28,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
+import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.components.Feed
+import ar.edu.unlam.mobile.scaffolding.ui.components.LocalUser
 import ar.edu.unlam.mobile.scaffolding.ui.components.LogoutConfirmationDialog
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostOptionsBottomSheet
 import ar.edu.unlam.mobile.scaffolding.ui.components.UserHeader
@@ -35,12 +45,12 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
-    userSessionViewModel: UserSessionViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
-    navController: NavController,
+    navController: NavHostController,
 ) {
+    val userSessionViewModel: UserSessionViewModel = hiltViewModel()
+    val user = LocalUser.current
     val uiState: PostUIState by viewModel.uiState.collectAsState()
-    val user by userSessionViewModel.user.collectAsState()
     val favoriteUsers by viewModel.favoriteUsers.collectAsState()
 
     // Actualizar la lista de post luego de crear uno nuevo
@@ -62,6 +72,14 @@ fun HomeScreen(
                 ?.savedStateHandle
                 ?.remove<Boolean>("shouldRefresh")
             viewModel.fetchPosts()
+        }
+    }
+
+    // Actualizar displayedUser solo si user no es null
+    var displayedUser by remember { mutableStateOf(user) }
+    LaunchedEffect(user) {
+        if (user != null) {
+            displayedUser = user
         }
     }
 
@@ -99,19 +117,47 @@ fun HomeScreen(
     if (showLogoutDialog) {
         LogoutConfirmationDialog(
             onConfirm = {
-                userSessionViewModel.logout {
-                    navController.navigate("login") {
-                        popUpTo("home") { inclusive = true }
-                    }
+                navController.navigate("login") {
+                    popUpTo("home") { inclusive = true }
                 }
+                userSessionViewModel.logout()
             },
             onDismiss = { showLogoutDialog = false },
             showDialog = showLogoutDialog,
         )
     }
 
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route
+    // agregamos las rutas donde queremos que no se vea la bottom bar o el fav
+    val hideBottomBarRoutes = listOf("addPost", "login", "signIn", "quotes", "user", "about")
+
+    val shouldHideBottomBarAndFav =
+        hideBottomBarRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        // La bottom bar y el fav lo movimos a home
+        bottomBar = {
+            if (!shouldHideBottomBarAndFav) {
+                BottomBar(controller = navController)
+            }
+        },
+        floatingActionButton = {
+            // oculta el botón en algunas pantallas
+            if (!shouldHideBottomBarAndFav) {
+                IconButton(
+                    modifier =
+                        Modifier.background(
+                            MaterialTheme.colorScheme.primaryContainer,
+                            CircleShape,
+                        ),
+                    onClick = { navController.navigate("addPost") },
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Crear Post")
+                }
+            }
+        },
     ) { paddingValues ->
         when (val postState = uiState.feedUiState) {
             // loading component
@@ -140,7 +186,7 @@ fun HomeScreen(
                     header = {
                         AnimatedVisibility(visible = showHeader) {
                             UserHeader(
-                                user = user,
+                                user = displayedUser!!,
                                 onProfileClick = { navController.navigate("user") },
                                 onLogoutClick = { showLogoutDialog = true },
                             )
@@ -149,7 +195,7 @@ fun HomeScreen(
                     favoriteUsernames = favoriteUsers.map { it.name }.toSet(),
                     onFollowClick = { post -> viewModel.toggleFavorite(post) },
                     onLikeClick = { post -> viewModel.toggleLike(post) },
-                    currentUser = user,
+                    currentUser = displayedUser,
                 )
             }
 

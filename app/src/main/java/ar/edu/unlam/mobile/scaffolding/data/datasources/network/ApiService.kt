@@ -63,5 +63,5 @@ interface ApiService {
     @PUT("api/v1/me/profile")
     suspend fun editUser(
         @Body request: EditUserRequestDto,
-    ): Response<Unit>
+    ): Response<UserProfileResponseDto>
 }

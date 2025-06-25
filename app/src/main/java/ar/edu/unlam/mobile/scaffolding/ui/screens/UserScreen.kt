@@ -23,7 +23,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.StateButton
 
 @Composable
 fun UserScreen(
-    // userSessionViewModel: UserSessionViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     navController: NavController,
 ) {
@@ -71,7 +70,10 @@ fun UserScreen(
             Spacer(modifier = Modifier.padding(top = 16.dp))
             StateButton(text = "Guardar cambios", isLoading = uiState.isLoading, onClick = {
                 userViewModel.editUser(
-                    onEditSuccess = { navController.popBackStack() },
+                    onEditSuccess = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set("shouldRefresh", true)
+                        navController.popBackStack()
+                    },
                     onError = { Toast.makeText(context, it, Toast.LENGTH_LONG).show() },
                 )
             })

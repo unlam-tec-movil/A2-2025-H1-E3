@@ -1,11 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.data.datasources.network
 
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AuthToken
+import ar.edu.unlam.mobile.scaffolding.domain.user.repository.ISessionRepository
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class AuthInterceptor(
-    private val authToken: AuthToken,
+    private val sessionManager: ISessionRepository,
 ) : Interceptor {
     // https://square.github.io/okhttp/features/interceptors/
     // Retrofit interceptor documentación
@@ -15,9 +15,9 @@ class AuthInterceptor(
                 .request()
                 .newBuilder()
                 .apply {
-                    // Agregamos a las peticiones HTTP los headers que nesecita la API
-                    addHeader("Authorization", authToken.userToken ?: "")
-                    addHeader("Application-Token", authToken.appToken)
+                    // Agregamos a las peticiones HTTP los headers que necesita la API
+                    addHeader("Authorization", sessionManager.userToken ?: "")
+                    addHeader("Application-Token", sessionManager.appToken.toString())
                 }.build()
         return chain.proceed(request)
     }

@@ -1,23 +1,22 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AuthToken
 import ar.edu.unlam.mobile.scaffolding.domain.post.repository.IPostRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreatePostUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.CreateReplyUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetPostsUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.GetQuotesUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.ToggleLikeUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.repository.ISessionRepository
 import ar.edu.unlam.mobile.scaffolding.domain.user.repository.IUserRepository
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.ClearCachedUserUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.ClearSessionUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.DeleteFavoriteUserUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetCachedUserUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetFavoriteUsersUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserSessionUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.InsertFavoriteUserUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.IsUserLoggedInUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LoginUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LogoutUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.SaveCachedUserUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.SaveUserSessionUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.SignInUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.UpdateUserProfileUseCase
 import dagger.Module
@@ -44,32 +43,29 @@ object UseCaseModule {
     @Provides
     fun provideLoginUseCase(
         repo: IUserRepository,
-        authToken: AuthToken,
-    ): LoginUseCase = LoginUseCase(repo, authToken)
+        sessionManager: ISessionRepository,
+    ): LoginUseCase = LoginUseCase(repo, sessionManager)
 
     @Provides
-    fun provideIsUserLoggedInUseCase(repo: IUserRepository): IsUserLoggedInUseCase = IsUserLoggedInUseCase(repo)
+    fun provideClearSessionUseCase(sessionManager: ISessionRepository): ClearSessionUseCase = ClearSessionUseCase(sessionManager)
+
+    @Provides
+    fun provideGetUserSessionUseCase(sessionManager: ISessionRepository): GetUserSessionUseCase = GetUserSessionUseCase(sessionManager)
+
+    @Provides
+    fun provideSaveUserSessionUseCase(sessionManager: ISessionRepository): SaveUserSessionUseCase = SaveUserSessionUseCase(sessionManager)
 
     @Provides
     fun provideGetUserProfileUseCase(repo: IUserRepository): GetUserProfileUseCase = GetUserProfileUseCase(repo)
 
     @Provides
-    fun provideLogoutUseCase(authToken: AuthToken): LogoutUseCase = LogoutUseCase(authToken)
-
-    @Provides
-    fun provideClearCachedUserUseCase(repo: IUserRepository): ClearCachedUserUseCase = ClearCachedUserUseCase(repo)
-
-    @Provides
-    fun provideGetCachedUserUseCase(repo: IUserRepository): GetCachedUserUseCase = GetCachedUserUseCase(repo)
-
-    @Provides
-    fun provideSaveCachedUserUseCase(repo: IUserRepository): SaveCachedUserUseCase = SaveCachedUserUseCase(repo)
+    fun provideLogoutUseCase(sessionManager: ISessionRepository): LogoutUseCase = LogoutUseCase(sessionManager)
 
     @Provides
     fun provideSignInUseCase(
         repo: IUserRepository,
-        authToken: AuthToken,
-    ): SignInUseCase = SignInUseCase(repo, authToken)
+        sessionManager: ISessionRepository,
+    ): SignInUseCase = SignInUseCase(repo, sessionManager)
 
     @Provides
     fun provideGetFavoriteUsersUseCase(repo: IUserRepository): GetFavoriteUsersUseCase = GetFavoriteUsersUseCase(repo)
@@ -84,5 +80,8 @@ object UseCaseModule {
     fun provideToggleLikeUseCase(repo: IPostRepository): ToggleLikeUseCase = ToggleLikeUseCase(repo)
 
     @Provides
-    fun provideUpdateUserProfileUseCase(repo: IUserRepository): UpdateUserProfileUseCase = UpdateUserProfileUseCase(repo)
+    fun provideUpdateUserProfileUseCase(
+        repo: IUserRepository,
+        sessionManager: ISessionRepository,
+    ): UpdateUserProfileUseCase = UpdateUserProfileUseCase(repo, sessionManager)
 }

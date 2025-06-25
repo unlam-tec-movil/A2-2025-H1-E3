@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,47 +23,40 @@ fun FavoriteUserCard(
     user: User,
     onFollowClick: () -> Unit,
 ) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-    ) {
-        // Avatar
-        Avatar(user.avatarUrl)
+    Column {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Avatar
+            Avatar(user.avatarUrl)
 
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            // Header: Author and date
+            Spacer(modifier = Modifier.width(12.dp))
 
             Text(
                 text = user.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.weight(1f), // Esto empuja el botón a la derecha
             )
+
             Spacer(modifier = Modifier.width(8.dp))
 
-            Text(
-                text = user.email,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                fontSize = 12.sp,
-            )
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-
-                TextButton(
-                    onClick = onFollowClick,
-                ) {
-                    Text(
-                        text = "Dejar de seguir",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+            TextButton(
+                onClick = onFollowClick,
+            ) {
+                Text(
+                    text = "Dejar de seguir",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
         }
+
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
     }
-    HorizontalDivider(modifier = Modifier.padding(horizontal = 10.dp))
 }

@@ -51,7 +51,7 @@ fun HomeScreen(
     val userSessionViewModel: UserSessionViewModel = hiltViewModel()
     val user = LocalUser.current
     val uiState: PostUIState by viewModel.uiState.collectAsState()
-    val favoriteUsers by viewModel.favoriteUsers.collectAsState()
+    // val favoriteUsers by viewModel.favoriteUsers.collectAsState()
 
     // Actualizar la lista de post luego de crear uno nuevo
     // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
@@ -135,6 +135,9 @@ fun HomeScreen(
     val shouldHideBottomBarAndFav =
         hideBottomBarRoutes.any { prefix -> currentRoute?.startsWith(prefix) == true }
 
+    val favoriteUsersViewModel: FavoriteUsersViewModel = hiltViewModel()
+    val favoriteUIState by favoriteUsersViewModel.uiState.collectAsState()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         // La bottom bar y el fav lo movimos a home
@@ -192,8 +195,12 @@ fun HomeScreen(
                             )
                         }
                     },
-                    favoriteUsernames = favoriteUsers.map { it.name }.toSet(),
-                    onFollowClick = { post -> viewModel.toggleFavorite(post) },
+                    favoriteUsernames =
+                        when (val favState = favoriteUIState.favoriteUIState) {
+                            is FavoriteUIState.Success -> favState.users.map { it.name }.toSet()
+                            else -> emptySet()
+                        },
+                    onFollowClick = { post -> favoriteUsersViewModel.toggleFavorite(post) },
                     onLikeClick = { post -> viewModel.toggleLike(post) },
                     currentUser = displayedUser,
                 )

@@ -3,15 +3,13 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.ClearCachedUserUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetCachedUserUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.LogoutUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.SaveCachedUserUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.ClearSessionUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserSessionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,64 +17,33 @@ import javax.inject.Inject
 class UserSessionViewModel
     @Inject
     constructor(
-        private val logoutUseCase: LogoutUseCase,
-        private val getUserProfileUseCase: GetUserProfileUseCase,
-        private val getCachedUserUseCase: GetCachedUserUseCase,
-        private val saveCachedUserUseCase: SaveCachedUserUseCase,
-        private val clearCachedUserUseCase: ClearCachedUserUseCase,
+        getUserSessionUseCase: GetUserSessionUseCase,
+        private val clearSessionUseCase: ClearSessionUseCase,
     ) : ViewModel() {
-        private val _user = MutableStateFlow<User?>(null)
-        val user: StateFlow<User?> = _user.asStateFlow()
+        val user: StateFlow<User?> =
+            getUserSessionUseCase()
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-        private val _isAuthenticated = MutableStateFlow(false)
-        val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
+        val isAuthenticated: StateFlow<Boolean> =
+            user
+                .map { it != null }
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-        private val _isLoading = MutableStateFlow(false)
-        val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-        private val _error = MutableStateFlow<String?>(null)
-        val error: StateFlow<String?> = _error.asStateFlow()
-
-        init {
-            loadCachedUserAndUpdateSession()
-        }
-
-        private fun loadCachedUserAndUpdateSession() {
+        fun logout() {
             viewModelScope.launch {
-                // Paso 1: Cargar usuario cacheado (muestra rápido en UI)
-                val cached = getCachedUserUseCase()
-                _user.value = cached
-                _isAuthenticated.value = cached != null
-
-                // Paso 2: Validar sesión actual contra API
-                checkSession()
-            }
-        }
-
-        fun checkSession() {
-            viewModelScope.launch {
-                _isLoading.value = true
-                try {
-                    val freshUser = getUserProfileUseCase()
-                    _user.value = freshUser
-                    _isAuthenticated.value = true
-                    saveCachedUserUseCase(freshUser) // Actualiza el cache
-                } catch (e: Exception) {
-                    _isAuthenticated.value = false
-                    _error.value = e.message
-                } finally {
-                    _isLoading.value = false
-                }
-            }
-        }
-
-        fun logout(onComplete: () -> Unit = {}) {
-            viewModelScope.launch {
-                logoutUseCase()
-                clearCachedUserUseCase()
-                _user.value = null
-                _isAuthenticated.value = false
-                onComplete()
+                clearSessionUseCase()
             }
         }
     }
+
+// Usamos LocalUser como una forma global y reactiva de acceder al usuario logueado
+// desde cualquier parte de la UI. Lo alimentamos con un StateFlow que proviene del dominio
+// (GetUserSessionUseCase), y usamos stateIn(...) para transformarlo en algo observable desde
+// Compose, con memoria del último valor y eficiencia en el ciclo de vida.
+
+// .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+// Parametros:
+// viewModelScope: El alcance de vida del StateFlow (se cancela con el ViewModel)
+// SharingStarted.WhileSubscribed :Solo se mantiene activo mientras haya observadores
+// 5000 : Si todos los observers se desconectan, espera 5 segundos antes de parar
+// null: Valor inicial (antes de que el Flow emita algo)

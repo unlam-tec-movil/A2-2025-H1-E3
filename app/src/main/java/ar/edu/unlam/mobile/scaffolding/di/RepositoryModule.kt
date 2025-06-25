@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AuthToken
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.FavoriteUserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
@@ -23,7 +22,6 @@ object RepositoryModule {
     @Provides @Singleton
     fun providerUserRepository(
         apiService: ApiService,
-        authToken: AuthToken,
         favoriteUserDao: FavoriteUserDao,
-    ): IUserRepository = UserRepository(apiService, authToken, favoriteUserDao)
+    ): IUserRepository = UserRepository(apiService, favoriteUserDao)
 }

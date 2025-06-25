@@ -2,7 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetCachedUserUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.UpdateUserProfileUseCase
 import ar.edu.unlam.mobile.scaffolding.utils.ValidationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +29,7 @@ data class EditUserState(
 class UserViewModel
     @Inject
     constructor(
-        private val getCachedUserUseCase: GetCachedUserUseCase,
+        private val getUserProfileUseCase: GetUserProfileUseCase,
         private val updateUserProfileUseCase: UpdateUserProfileUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(EditUserState())
@@ -41,11 +41,11 @@ class UserViewModel
 
         private fun loadUserData() {
             viewModelScope.launch {
-                val user = getCachedUserUseCase()
+                val user = getUserProfileUseCase()
                 _uiState.value =
                     EditUserState(
-                        name = user?.name.orEmpty(),
-                        avatarUrl = user?.avatarUrl.orEmpty(),
+                        name = user.name.orEmpty(),
+                        avatarUrl = user.avatarUrl.orEmpty(),
                     )
             }
         }
@@ -75,7 +75,7 @@ class UserViewModel
             val passwordValid = ValidationUtils.isPasswordValid(uiState.value.password)
             val confirmPasswordValid =
                 ValidationUtils.doPasswordsMatch(uiState.value.password, uiState.value.confirmPassword)
-            val avatarUrlValid = (uiState.value.avatarUrl.isEmpty())
+            val avatarUrlValid = (uiState.value.avatarUrl.isNotBlank())
             _uiState.update {
                 it.copy(
                     nameError = if (!nameValid) "El nombre debe tener al menos 3 caracteres" else null,
@@ -92,10 +92,12 @@ class UserViewModel
         ) {
             _uiState.update { it.copy(showErrors = true) }
             verifyEditUser()
-            if (_uiState.value.nameError != null ||
-                _uiState.value.passwordError != null ||
-                _uiState.value.confirmPasswordError != null ||
-                _uiState.value.avatarUrlError != null
+            if (listOf(
+                    _uiState.value.nameError,
+                    _uiState.value.passwordError,
+                    _uiState.value.confirmPasswordError,
+                    _uiState.value.avatarUrlError,
+                ).any { it != null }
             ) {
                 return
             }

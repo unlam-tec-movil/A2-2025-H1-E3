@@ -1,7 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import android.util.Log
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AuthToken
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.FavoriteUserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
@@ -19,7 +18,6 @@ import java.io.IOException
 
 class UserRepository(
     private val apiService: ApiService,
-    private val authToken: AuthToken,
     private val favoriteUserDao: FavoriteUserDao,
 ) : IUserRepository {
     override suspend fun register(
@@ -66,8 +64,6 @@ class UserRepository(
         }
     }
 
-    override suspend fun isUserLogged(): Boolean = !authToken.userToken.isNullOrEmpty()
-
     override suspend fun getUserProfile(): User =
         try {
             val responseDto = apiService.getUserProfile()
@@ -75,16 +71,6 @@ class UserRepository(
         } catch (e: Exception) {
             throw e
         }
-
-    override suspend fun getCachedUser(): User? = authToken.cachedUser
-
-    override suspend fun saveCachedUser(user: User) {
-        authToken.cachedUser = user
-    }
-
-    override suspend fun clearCachedUser() {
-        authToken.cachedUser = null
-    }
 
     override suspend fun insertFavoriteUser(user: User) {
         favoriteUserDao.insertFavoriteUser(user.toFavoriteUser())
@@ -103,19 +89,27 @@ class UserRepository(
         name: String,
         avatarUrl: String,
         password: String,
-    ) {
+    ): User {
         val request = EditUserRequestDto(name, avatarUrl, password)
-        val response = apiService.editUser(request)
-        if (response.isSuccessful) {
-            val currentUser = authToken.cachedUser
-            if (currentUser != null) {
+        try {
+            val response = apiService.editUser(request)
+            if (response.isSuccessful) {
+                val body = response.body()
                 val updatedUser =
-                    currentUser.copy(
-                        name = name,
-                        avatarUrl = avatarUrl.ifBlank { currentUser.avatarUrl },
-                    )
-                authToken.cachedUser = updatedUser
+                    body?.toDomain()
+                        ?: throw Exception("Respuesta del servidor vacía")
+
+                return updatedUser
+            } else {
+                val error = response.errorBody()?.string()
+                throw Exception("Error ${response.code()}: $error")
             }
+        } catch (e: IOException) {
+            throw Exception("Error de red: ${e.localizedMessage}", e)
+        } catch (e: HttpException) {
+            throw Exception("Error HTTP: ${e.localizedMessage}", e)
+        } catch (e: Exception) {
+            throw Exception("Error inesperado: ${e.localizedMessage}", e)
         }
     }
 }

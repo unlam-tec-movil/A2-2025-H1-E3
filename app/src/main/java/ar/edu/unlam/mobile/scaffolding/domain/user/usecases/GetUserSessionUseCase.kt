@@ -1,11 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.domain.user.usecases
 
+import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
 import ar.edu.unlam.mobile.scaffolding.domain.user.repository.ISessionRepository
+import kotlinx.coroutines.flow.Flow
 
-class LogoutUseCase(
+class GetUserSessionUseCase(
     private val sessionManager: ISessionRepository,
 ) {
-    suspend operator fun invoke() {
-        sessionManager.clearSession()
-    }
+    operator fun invoke(): Flow<User?> = sessionManager.currentUser
 }

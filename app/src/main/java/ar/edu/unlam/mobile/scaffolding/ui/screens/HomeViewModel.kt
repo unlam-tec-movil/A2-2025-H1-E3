@@ -9,7 +9,6 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.usecases.ToggleLikeUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.models.User
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.DeleteFavoriteUserUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetFavoriteUsersUseCase
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.InsertFavoriteUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +43,6 @@ class HomeViewModel
     @Inject
     constructor(
         private val getPostsUseCase: GetPostsUseCase,
-        private val getUserProfileUseCase: GetUserProfileUseCase,
         private val getFavoriteUsersUseCase: GetFavoriteUsersUseCase,
         private val insertFavoriteUserUseCase: InsertFavoriteUserUseCase,
         private val deleteFavoriteUserUseCase: DeleteFavoriteUserUseCase,

@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -44,19 +46,28 @@ fun DraftScreen(
                     CircularProgressIndicator()
                 }
             }
+
             is DraftUIState.Success -> {
-                Column(
-                    modifier =
-                        Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                            .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    if (state.drafts.isEmpty()) {
+                if (state.drafts.isEmpty()) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                        contentAlignment = Alignment.Center,
+                    ) {
                         Text("No hay borradores guardados.")
-                    } else {
-                        state.drafts.forEach { draft ->
+                    }
+                } else {
+                    LazyColumn(
+                        modifier =
+                            Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize()
+                                .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        items(state.drafts) { draft ->
                             DraftItem(
                                 draft = draft,
                                 onDelete = { viewModel.deleteDraft(draft) },
@@ -71,6 +82,7 @@ fun DraftScreen(
                     }
                 }
             }
+
             is DraftUIState.Error -> {
                 Text(
                     text = state.message,
@@ -102,9 +114,13 @@ fun DraftItem(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
+
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             Button(
                 onClick = { onPublish(draft.id, draft.message) },
                 modifier = Modifier.weight(1f),
@@ -135,7 +151,7 @@ fun DraftItem(
                 Text("Eliminar")
             }
         }
+
+        HorizontalDivider(modifier = Modifier.padding(top = 12.dp))
     }
-    // Línea separadora
-    HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
 }

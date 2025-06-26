@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -17,11 +16,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.Favorites
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavUsersScreen(
     viewModel: FavoriteUsersViewModel = hiltViewModel(),
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     navController: NavController,
 ) {
@@ -65,24 +63,3 @@ fun FavUsersScreen(
         }
     }
 }
-
-// composable("favorites") {
-//    FavUsersScreen(
-//        snackbarHostState = snackbarHostState,
-//        navController = controller,
-//        listState = rememberLazyListState(),
-//        modifier = Modifier.padding(paddingValue),
-//    )
-// }
-
-// NavigationBarItem(
-// selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "favorites" } == true,
-// onClick = { controller.navigate("favorites") },
-// icon = {
-//    Icon(
-//        imageVector = Icons.Default.Favorite,
-//        contentDescription = "Favoritos",
-//        tint = MaterialTheme.colorScheme.primary,
-//    )
-// },
-// )

@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -33,6 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.components.Feed
+import ar.edu.unlam.mobile.scaffolding.ui.components.HandleRefresh
 import ar.edu.unlam.mobile.scaffolding.ui.components.LocalUser
 import ar.edu.unlam.mobile.scaffolding.ui.components.LogoutConfirmationDialog
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostOptionsBottomSheet
@@ -54,26 +56,7 @@ fun HomeScreen(
     // val favoriteUsers by viewModel.favoriteUsers.collectAsState()
 
     // Actualizar la lista de post luego de crear uno nuevo
-    // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
-    val shouldRefreshFlow =
-        navController.currentBackStackEntry
-            ?.savedStateHandle
-            ?.getStateFlow("shouldRefresh", false)
-
-    // 2. Lo convertimos a State<Bool> con collectAsState
-    val shouldRefresh by shouldRefreshFlow
-        ?.collectAsState(initial = false)
-        ?: remember { mutableStateOf(false) }
-
-    // 3. Cuando cambie a true, lo limpiamos y refrescamos
-    LaunchedEffect(shouldRefresh) {
-        if (shouldRefresh) {
-            navController.currentBackStackEntry
-                ?.savedStateHandle
-                ?.remove<Boolean>("shouldRefresh")
-            viewModel.fetchPosts()
-        }
-    }
+    HandleRefresh(navController = navController, onRefresh = { viewModel.fetchPosts() })
 
     // Actualizar displayedUser solo si user no es null
     var displayedUser by remember { mutableStateOf(user) }
@@ -161,6 +144,7 @@ fun HomeScreen(
                 }
             }
         },
+        contentWindowInsets = WindowInsets(0),
     ) { paddingValues ->
         when (val postState = uiState.feedUiState) {
             // loading component
@@ -203,6 +187,7 @@ fun HomeScreen(
                     onFollowClick = { post -> favoriteUsersViewModel.toggleFavorite(post) },
                     onLikeClick = { post -> viewModel.toggleLike(post) },
                     currentUser = displayedUser,
+                    contentPadding = paddingValues,
                 )
             }
 

@@ -24,21 +24,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,8 +51,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.components.CustomHeader
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(navController: NavController) {
     var logoVisible by remember { mutableStateOf(false) }
@@ -69,14 +65,7 @@ fun AboutScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Acerca de...") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBackIosNew, contentDescription = "Volver")
-                    }
-                },
-            )
+            CustomHeader(title = "Acerca de...", onBack = { navController.popBackStack() })
         },
     ) { innerPadding ->
         Column(

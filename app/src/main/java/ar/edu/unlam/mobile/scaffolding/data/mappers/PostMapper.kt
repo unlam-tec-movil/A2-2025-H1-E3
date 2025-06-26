@@ -17,18 +17,6 @@ fun PostResponseDto.toDomain(): Post =
         date = date,
     )
 
-fun Post.toDto(): PostResponseDto =
-    PostResponseDto(
-        id = id,
-        message = message,
-        parentId = parentId,
-        author = author,
-        avatarUrl = avatarUrl,
-        likes = likes,
-        liked = liked,
-        date = date,
-    )
-
 fun DraftEntity.toDomain(): Draft =
     Draft(
         id = id,

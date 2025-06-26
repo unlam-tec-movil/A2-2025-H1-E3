@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -102,7 +103,7 @@ fun MainScreen(sessionViewModel: UserSessionViewModel = hiltViewModel()) {
             } else {
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-                ) {
+                ) { paddingValue ->
                     // NavHost es el componente que funciona como contenedor de los otros componentes que
                     // podrán ser destinos de navegación.
                     NavHost(navController = controller, startDestination = if (isAuthenticated) "home" else "login") {
@@ -124,6 +125,7 @@ fun MainScreen(sessionViewModel: UserSessionViewModel = hiltViewModel()) {
                             HomeScreen(
                                 snackbarHostState = snackbarHostState,
                                 navController = controller,
+                                modifier = Modifier.padding(paddingValue),
                             )
                         }
 

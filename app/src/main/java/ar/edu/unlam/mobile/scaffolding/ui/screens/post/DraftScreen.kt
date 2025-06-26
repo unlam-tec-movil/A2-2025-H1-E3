@@ -3,15 +3,12 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Draft
@@ -107,51 +104,43 @@ fun DraftItem(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(4.dp),
     ) {
         Text(
             text = draft.message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 14.sp,
+            lineHeight = 22.sp,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
         ) {
-            Button(
+            TextButton(
                 onClick = { onPublish(draft.id, draft.message) },
-                modifier = Modifier.weight(1f),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                shape = RoundedCornerShape(10.dp),
             ) {
-                Icon(Icons.Default.Publish, contentDescription = "Publicar")
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("Publicar")
+                Text(
+                    text = "Publicar",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
 
-            Button(
+            TextButton(
                 onClick = onDelete,
-                modifier = Modifier.weight(1f),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError,
-                    ),
-                shape = RoundedCornerShape(10.dp),
             ) {
-                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("Eliminar")
+                Text(
+                    text = "Eliminar",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
         }
 
-        HorizontalDivider(modifier = Modifier.padding(top = 12.dp))
+        HorizontalDivider(modifier = Modifier.padding(top = 6.dp))
+//        HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
     }
 }

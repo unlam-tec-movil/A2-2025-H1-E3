@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +48,7 @@ import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        enableEdgeToEdge()
         setContent {
             ScaffoldingV2Theme {
                 // A surface container using the 'background' color from the theme
@@ -123,8 +124,8 @@ fun MainScreen(sessionViewModel: UserSessionViewModel = hiltViewModel()) {
                             // Home es el componente en sí que es el destino de navegación.
                             HomeScreen(
                                 snackbarHostState = snackbarHostState,
-                                modifier = Modifier.padding(paddingValue),
                                 navController = controller,
+                                modifier = Modifier.padding(paddingValue),
                             )
                         }
 
@@ -155,7 +156,6 @@ fun MainScreen(sessionViewModel: UserSessionViewModel = hiltViewModel()) {
                             QuotesScreen(
                                 navController = controller,
                                 snackbarHostState = snackbarHostState,
-                                modifier = Modifier.padding(paddingValue),
                                 postId = postId,
                             )
                         }
@@ -196,7 +196,6 @@ fun MainScreen(sessionViewModel: UserSessionViewModel = hiltViewModel()) {
                             FavUsersScreen(
                                 snackbarHostState = snackbarHostState,
                                 navController = controller,
-                                modifier = Modifier.padding(paddingValue),
                             )
                         }
 

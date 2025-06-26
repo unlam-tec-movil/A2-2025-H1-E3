@@ -21,7 +21,7 @@ import coil.compose.AsyncImage
 fun Avatar(
     avatarUrl: String?,
     modifier: Modifier = Modifier,
-    defaultImageRes: Int = R.drawable.ic_launcher_foreground,
+    defaultImageRes: Int = R.drawable.logo_circle,
     avatarSize: Dp = 48.dp, // Valor por defecto
 ) {
     val model =

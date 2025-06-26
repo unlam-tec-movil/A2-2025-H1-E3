@@ -33,8 +33,8 @@ fun UserHeader(
                 .fillMaxWidth()
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainer,
-                    shape = RoundedCornerShape(12.dp),
-                ).padding(8.dp),
+                    shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp),
+                ).padding(top = 24.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {

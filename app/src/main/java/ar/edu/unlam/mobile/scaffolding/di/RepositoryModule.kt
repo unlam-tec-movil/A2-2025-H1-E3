@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
     // --- Repositorios ---
-    @Provides
+    @Provides @Singleton
     fun providerPostRepository(
         apiService: ApiService,
         draftDao: DraftDao,

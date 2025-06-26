@@ -3,7 +3,6 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material3.*
@@ -14,9 +13,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Draft
+import ar.edu.unlam.mobile.scaffolding.ui.components.CustomHeader
 import ar.edu.unlam.mobile.scaffolding.utils.encode
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DraftScreen(
     navController: NavController,
@@ -30,14 +29,7 @@ fun DraftScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Borradores") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBackIosNew, contentDescription = "Volver")
-                    }
-                },
-            )
+            CustomHeader(title = "Borradores", onBack = { navController.popBackStack() })
         },
     ) { innerPadding ->
         when (val state = uiState.draftUIState) {

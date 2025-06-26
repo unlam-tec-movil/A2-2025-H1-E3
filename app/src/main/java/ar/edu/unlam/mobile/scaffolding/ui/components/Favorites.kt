@@ -32,7 +32,7 @@ fun Favorites(
             if (users.isEmpty()) {
                 item {
                     EmptyState(
-                        message = "No hay FAVORITOS para este usuario aún.",
+                        message = "No hay usuarios favoritos aún.",
                         onBackClick = onBackClick,
                         modifier = Modifier.fillMaxSize().padding(top = 32.dp),
                     )

@@ -13,16 +13,20 @@ fun HandleRefresh(
     navController: NavController,
     onRefresh: () -> Unit,
 ) {
+    // Actualizar la lista de post luego de crear uno nuevo
+    // 1. Sacamos un StateFlow<Boolean> con un valor por defecto
     val shouldRefreshFlow =
         navController
             .currentBackStackEntry
             ?.savedStateHandle
             ?.getStateFlow("shouldRefresh", false)
 
+    // 2. Lo convertimos a State<Bool> con collectAsState
     val shouldRefresh by shouldRefreshFlow
         ?.collectAsState(initial = false)
         ?: remember { mutableStateOf(false) }
 
+    // 3. Cuando cambie a true, lo limpiamos y refrescamos
     LaunchedEffect(shouldRefresh) {
         if (shouldRefresh) {
             navController.currentBackStackEntry

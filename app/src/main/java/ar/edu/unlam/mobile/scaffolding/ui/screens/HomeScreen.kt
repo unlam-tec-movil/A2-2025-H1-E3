@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -17,6 +16,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -159,36 +161,52 @@ fun HomeScreen(
 
             // success component
             is FeedUIState.Success -> {
-                Feed(
-                    posts = postState.posts,
-                    modifier = modifier.padding(paddingValues),
-                    onOptionsClick = { post ->
-                        selectedPost = post
-                        isSheetOpen = true
-                        coroutineScope.launch {
-                            sheetState.show()
-                        }
+                val isRefreshing = uiState.isRefreshing
+                val state = rememberPullToRefreshState()
+
+                PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = { viewModel.fetchPosts() },
+                    state = state,
+                    indicator = {
+                        Indicator(
+                            modifier = Modifier.align(Alignment.TopCenter),
+                            isRefreshing = isRefreshing,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            state = state,
+                        )
                     },
-                    listState = listState,
-                    header = {
-                        AnimatedVisibility(visible = showHeader) {
-                            UserHeader(
-                                user = displayedUser!!,
-                                onProfileClick = { navController.navigate("user") },
-                                onLogoutClick = { showLogoutDialog = true },
-                            )
-                        }
-                    },
-                    favoriteUsernames =
-                        when (val favState = favoriteUIState.favoriteUIState) {
-                            is FavoriteUIState.Success -> favState.users.map { it.name }.toSet()
-                            else -> emptySet()
+                ) {
+                    Feed(
+                        posts = postState.posts,
+                        modifier = Modifier.fillMaxSize(),
+                        onOptionsClick = { post ->
+                            selectedPost = post
+                            isSheetOpen = true
+                            coroutineScope.launch { sheetState.show() }
                         },
-                    onFollowClick = { post -> favoriteUsersViewModel.toggleFavorite(post) },
-                    onLikeClick = { post -> viewModel.toggleLike(post) },
-                    currentUser = displayedUser,
-                    contentPadding = paddingValues,
-                )
+                        listState = listState,
+                        header = {
+                            AnimatedVisibility(visible = showHeader) {
+                                UserHeader(
+                                    user = displayedUser!!,
+                                    onProfileClick = { navController.navigate("user") },
+                                    onLogoutClick = { showLogoutDialog = true },
+                                )
+                            }
+                        },
+                        favoriteUsernames =
+                            when (val favState = favoriteUIState.favoriteUIState) {
+                                is FavoriteUIState.Success -> favState.users.map { it.name }.toSet()
+                                else -> emptySet()
+                            },
+                        onFollowClick = { post -> favoriteUsersViewModel.toggleFavorite(post) },
+                        onLikeClick = { post -> viewModel.toggleLike(post) },
+                        currentUser = displayedUser,
+                        contentPadding = paddingValues,
+                    )
+                }
             }
 
             // error component

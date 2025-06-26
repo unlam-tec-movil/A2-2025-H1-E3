@@ -29,6 +29,7 @@ sealed interface FeedUIState {
 
 data class PostUIState(
     val feedUiState: FeedUIState,
+    val isRefreshing: Boolean = false,
 )
 
 @HiltViewModel
@@ -57,16 +58,29 @@ class HomeViewModel
             viewModelScope.launch {
                 getPostsUseCase()
                     .onStart {
-                        _uiState.value = PostUIState(FeedUIState.Loading)
+                        val currentState = _uiState.value
+                        _uiState.value =
+                            if (currentState.feedUiState is FeedUIState.Success) {
+                                // Si ya hay datos, mostramos indicador de refresco
+                                currentState.copy(isRefreshing = true)
+                            } else {
+                                // Si es la primera carga, mostramos el loader central
+                                PostUIState(FeedUIState.Loading)
+                            }
                     }.catch {
                         _uiState.value =
                             PostUIState(
                                 FeedUIState.Error(
                                     "Error cargando el feed: Verifique la conexión a internet e intente nuevamente",
                                 ),
+                                isRefreshing = false,
                             )
                     }.collect { posts ->
-                        _uiState.value = PostUIState(FeedUIState.Success(posts))
+                        _uiState.value =
+                            PostUIState(
+                                FeedUIState.Success(posts),
+                                isRefreshing = false,
+                            )
                     }
             }
         }

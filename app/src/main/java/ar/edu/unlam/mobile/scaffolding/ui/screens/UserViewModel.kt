@@ -2,12 +2,13 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserProfileUseCase
+import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.GetUserSessionUseCase
 import ar.edu.unlam.mobile.scaffolding.domain.user.usecases.UpdateUserProfileUseCase
 import ar.edu.unlam.mobile.scaffolding.utils.ValidationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +30,7 @@ data class EditUserState(
 class UserViewModel
     @Inject
     constructor(
-        private val getUserProfileUseCase: GetUserProfileUseCase,
+        private val getUserSessionUseCase: GetUserSessionUseCase,
         private val updateUserProfileUseCase: UpdateUserProfileUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(EditUserState())
@@ -41,12 +42,15 @@ class UserViewModel
 
         private fun loadUserData() {
             viewModelScope.launch {
-                val user = getUserProfileUseCase()
-                _uiState.value =
-                    EditUserState(
-                        name = user.name.orEmpty(),
-                        avatarUrl = user.avatarUrl.orEmpty(),
-                    )
+                getUserSessionUseCase().collectLatest { user ->
+                    user?.let {
+                        _uiState.value =
+                            EditUserState(
+                                name = it.name.orEmpty(),
+                                avatarUrl = it.avatarUrl.orEmpty(),
+                            )
+                    }
+                }
             }
         }
 

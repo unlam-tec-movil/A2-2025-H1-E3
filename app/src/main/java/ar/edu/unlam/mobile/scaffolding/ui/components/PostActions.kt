@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.domain.post.models.Post
+import ar.edu.unlam.mobile.scaffolding.utils.formatLikes
 
 @Composable
 fun PostActions(
@@ -37,7 +38,7 @@ fun PostActions(
         targetValue = if (post.liked) Color.Red else Color.Gray,
         label = "heart color",
     )
-    val likeCountText = remember(post.likes) { post.likes.toString() }
+    val likeCountText = remember(post.likes) { formatLikes(post.likes) }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = onReplyClick) {

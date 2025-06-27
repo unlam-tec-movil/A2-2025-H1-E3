@@ -8,7 +8,7 @@ data class PostResponseDto(
     @SerializedName("parent_id") val parentId: Int,
     val author: String,
     @SerializedName("avatar_url") val avatarUrl: String,
-    val likes: Int,
+    val likes: Long,
     val liked: Boolean,
     val date: String,
 )

@@ -22,15 +22,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.CustomHeader
@@ -91,8 +89,8 @@ fun AboutScreen(navController: NavController) {
                     contentDescription = "Logo de la app",
                     modifier =
                         Modifier
-                            .padding(top = 24.dp)
-                            .size(120.dp)
+                            .padding(top = 15.dp)
+                            .size(100.dp)
                             .clip(CircleShape),
                 )
             }
@@ -108,175 +106,174 @@ fun AboutScreen(navController: NavController) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 12.dp)
                             .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-//                    Spacer(modifier = Modifier.height(16.dp))
-
                     Text(
                         text = "X Clone",
-                        style = MaterialTheme.typography.headlineLarge,
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
                     )
 
                     Text(
                         text = "Aplicación para Programación Móvil 2, Universidad de La Matanza.",
-                        style = MaterialTheme.typography.bodyLarge,
+                        style =
+                            MaterialTheme.typography.bodyLarge.copy(
+                                lineHeight = 22.sp,
+                            ),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                     )
 
                     Text(
-                        text = "CATEDRA: \n Maximiliano De Pietro y Leonel Larreta.",
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = "Cátedra: \n Maximiliano De Pietro y Leonel Larreta.",
+                        style =
+                            MaterialTheme.typography.bodyLarge.copy(
+                                lineHeight = 22.sp,
+                            ),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
 
-                    Card(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 4.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Row(modifier = Modifier.padding(bottom = 10.dp)) {
-                                Column(Modifier.padding(end = 14.dp)) {
-                                    Box(
-                                        modifier =
-                                            Modifier
-                                                .size(60.dp)
-                                                .clip(CircleShape)
-                                                .background(MaterialTheme.colorScheme.primaryContainer),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Settings,
-                                            contentDescription = "Configuración",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(32.dp),
-                                        )
-                                    }
-                                }
-                                Column {
-                                    Text(
-                                        text = "TECNOLOGÍAS USADAS",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.SemiBold,
-                                        textAlign = TextAlign.Start,
-                                        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
-                                        color = MaterialTheme.colorScheme.primary,
+                    Spacer(modifier = Modifier)
+
+                    HorizontalDivider()
+
+                    Column(modifier = Modifier.padding(6.dp)) {
+                        Row(modifier = Modifier.padding(bottom = 10.dp)) {
+                            Column(Modifier.padding(end = 14.dp)) {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .size(30.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Settings,
+                                        contentDescription = "Configuración",
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(20.dp),
                                     )
-
-                                    val tecnologias =
-                                        listOf(
-                                            "Clean Architecture",
-                                            "Jetpack Compose (UI moderna de Android)",
-                                            "Material 3 (Diseño visual moderno)",
-                                            "Navigation Compose (Navegación declarativa)",
-                                            "Retrofit (Llamadas HTTP)",
-                                            "Gson (Conversión JSON)",
-                                            "Room (Persistencia local)",
-                                            "Hilt (Inyección de dependencias)",
-                                            "Coil (Carga eficiente de imágenes)",
-                                        )
-
-                                    Column(
-                                        modifier =
-                                            Modifier
-                                                .fillMaxSize(),
-                                    ) {
-                                        tecnologias.forEach { tecnologia ->
-                                            Text(
-                                                text = "• $tecnologia",
-                                            )
-                                        }
-                                    }
                                 }
                             }
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Column {
+                                Text(
+                                    text = "Tecnologías usadas:",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                )
 
-                            HorizontalDivider()
-
-                            Row(modifier = Modifier.padding(top = 10.dp)) {
-                                Column(Modifier.padding(end = 14.dp)) {
-                                    Box(
-                                        modifier =
-                                            Modifier
-                                                .size(60.dp)
-                                                .clip(CircleShape)
-                                                .background(MaterialTheme.colorScheme.primaryContainer),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Group,
-                                            contentDescription = "Configuración",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(32.dp),
-                                        )
-                                    }
-                                }
-                                Column {
-                                    Text(
-                                        text = "DESARROLLADO POR",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.SemiBold,
-                                        textAlign = TextAlign.Start,
-                                        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
-                                        color = MaterialTheme.colorScheme.primary,
+                                val tecnologias =
+                                    listOf(
+                                        "Clean Architecture",
+                                        "Jetpack Compose (UI moderna de Android)",
+                                        "Material 3 (Diseño visual moderno)",
+                                        "Navigation Compose (Navegación declarativa)",
+                                        "Retrofit (Llamadas HTTP)",
+                                        "Gson (Conversión JSON)",
+                                        "Room (Persistencia local)",
+                                        "Hilt (Inyección de dependencias)",
+                                        "Coil (Carga eficiente de imágenes)",
                                     )
 
-                                    val alumnos =
-                                        listOf(
-                                            "Carrazan Federico",
-                                            "Chile Daiana",
-                                            "Irigoin Alan",
-                                            "Mucci Natalia",
-                                            "Nizzi Gonzalo",
-                                            "Olivera Christian",
-                                            "Paez Federico",
+                                Column(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize(),
+                                ) {
+                                    tecnologias.forEach { tecnologia ->
+                                        Text(
+                                            text = "• $tecnologia",
+                                            fontSize = 14.sp,
+                                            lineHeight = 22.sp,
+                                            color = MaterialTheme.colorScheme.onBackground,
                                         )
-
-                                    Column(
-                                        modifier =
-                                            Modifier
-                                                .fillMaxSize(),
-                                    ) {
-                                        alumnos.forEach { alumno ->
-                                            Text(
-                                                text = "• $alumno",
-                                            )
-                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    val context = LocalContext.current
-
-                    Button(
-                        onClick = {
-                            val intent =
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse("https://github.com/unlam-tec-movil/A2-2025-H1-E3"),
+                        Row(modifier = Modifier.padding(top = 10.dp)) {
+                            Column(Modifier.padding(end = 14.dp)) {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .size(30.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Group,
+                                        contentDescription = "Configuración",
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(20.dp),
+                                    )
+                                }
+                            }
+                            Column {
+                                Text(
+                                    text = "Desarrollado por:",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.onBackground,
                                 )
-                            context.startActivity(intent)
-                        },
-                        modifier = Modifier.padding(top = 16.dp),
-                    ) {
-                        Icon(Icons.Default.OpenInBrowser, contentDescription = "GitHub")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Ver en GitHub")
+
+                                val alumnos =
+                                    listOf(
+                                        "Carrazan Federico",
+                                        "Chile Daiana",
+                                        "Irigoin Alan",
+                                        "Mucci Natalia",
+                                        "Nizzi Gonzalo",
+                                        "Olivera Christian",
+                                        "Paez Federico",
+                                    )
+
+                                Column(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize(),
+                                ) {
+                                    alumnos.forEach { alumno ->
+                                        Text(
+                                            text = "• $alumno",
+                                            fontSize = 14.sp,
+                                            lineHeight = 22.sp,
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        val context = LocalContext.current
+
+                        Button(
+                            onClick = {
+                                val intent =
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("https://github.com/unlam-tec-movil/A2-2025-H1-E3"),
+                                    )
+                                context.startActivity(intent)
+                            },
+                            modifier =
+                                Modifier
+                                    .padding(top = 16.dp)
+                                    .align(Alignment.CenterHorizontally),
+                        ) {
+                            Icon(Icons.Default.OpenInBrowser, contentDescription = "GitHub")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Ver en GitHub")
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }

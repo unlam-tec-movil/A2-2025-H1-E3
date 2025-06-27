@@ -46,7 +46,7 @@ fun Splash() {
         ) {
             Image(
                 painterResource(
-                    id = if (isDarkTheme) R.drawable.logo_circle else R.drawable.logo_circle,
+                    id = if (isDarkTheme) R.drawable.logo_light else R.drawable.logo_dark,
                 ),
                 contentDescription = "logo",
                 Modifier.size(120.dp),

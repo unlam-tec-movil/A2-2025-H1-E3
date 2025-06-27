@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +56,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.CustomHeader
 
 @Composable
 fun AboutScreen(navController: NavController) {
+    val isDarkTheme = isSystemInDarkTheme()
     var logoVisible by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
 
@@ -83,7 +85,9 @@ fun AboutScreen(navController: NavController) {
                         scaleIn(initialScale = 0.8f, animationSpec = tween(1000)),
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo_circle),
+                    painterResource(
+                        id = if (isDarkTheme) R.drawable.logo_light else R.drawable.logo_dark,
+                    ),
                     contentDescription = "Logo de la app",
                     modifier =
                         Modifier

@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
     val uiState: LoginState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -48,7 +50,9 @@ fun LoginScreen(
         Spacer(modifier = Modifier.weight(.5f))
         // Logo de la app
         Image(
-            painter = painterResource(id = R.drawable.logo_circle),
+            painterResource(
+                id = if (isDarkTheme) R.drawable.logo_light else R.drawable.logo_dark,
+            ),
             contentDescription = "Logo de la app",
             modifier =
                 Modifier

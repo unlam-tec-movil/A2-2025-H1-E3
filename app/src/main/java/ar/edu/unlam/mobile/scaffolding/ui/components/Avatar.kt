@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -21,9 +22,9 @@ import coil.compose.AsyncImage
 fun Avatar(
     avatarUrl: String?,
     modifier: Modifier = Modifier,
-    defaultImageRes: Int = R.drawable.logo_circle,
     avatarSize: Dp = 48.dp, // Valor por defecto
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     val model =
         remember(avatarUrl) {
             when {
@@ -47,7 +48,10 @@ fun Avatar(
         )
     } else {
         Image(
-            painter = painterResource(id = defaultImageRes),
+//            painter = painterResource(id = defaultImageRes),
+            painterResource(
+                id = if (isDarkTheme) R.drawable.logo_light else R.drawable.logo_dark,
+            ),
             contentDescription = "default avatar",
             modifier =
                 modifier
